@@ -14,9 +14,9 @@
         android:layout_marginBottom="@dimen/common_spacing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+
         app:layout_constraintBottom_toBottomOf="@id/barrier"
         tools:srcCompat="@sample/posts.json/data/authorAvatar"/>
-
     <TextView
         android:id="@+id/txtAuthor"
         android:layout_width="0dp"
