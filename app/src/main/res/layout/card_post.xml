@@ -111,14 +111,18 @@
         app:icon="@drawable/ic_share_24"
         app:iconTint="@color/colorGrey"/>
 
-    <TextView
-        android:id="@+id/txtViews"
+     <com.google.android.material.button.MaterialButton
+        android:id="@+id/viewsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/imgView"
-        app:layout_constraintBottom_toBottomOf="@id/imgView"
+        app:icon="@drawable/ic_remove_red_eye_black_24dp"
+        app:iconTint="@color/colorBackground"
+        app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="@sample/posts.json/data/views"/>
+        tools:text="@sample/posts.json/data/viewsCount[1]"
+        style="@style/ButtonStyle"
+        tools:ignore="UnknownId" />
+
     <ImageView
         android:id="@+id/imgView"
         android:layout_width="wrap_content"
@@ -127,7 +131,7 @@
         android:layout_marginEnd="@dimen/common_spacing"
         app:layout_constraintTop_toTopOf="@+id/btnLike"
         app:layout_constraintBottom_toBottomOf="@+id/btnLike"
-        app:layout_constraintEnd_toStartOf="@id/txtViews"
+        app:layout_constraintEnd_toStartOf="@id/viewsButton"
         app:srcCompat="@drawable/ic_views_24"/>
 
     <View
