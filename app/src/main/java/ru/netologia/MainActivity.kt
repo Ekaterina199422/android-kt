@@ -1,11 +1,11 @@
 package ru.netologia
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 import ru.netologia.adapter.OnInteractionListener
@@ -75,6 +75,10 @@ class MainActivity : AppCompatActivity() {
                 setText("")
                 clearFocus()
                 AndroidUtils.hideKeyboard(this)
+            }
+            with(binding.grpEditMessage) {
+                grpEditMessage.visibility = View.GONE
+                txtEditPost.setText("")
             }
         }
 

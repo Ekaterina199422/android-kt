@@ -14,9 +14,9 @@
         android:layout_marginBottom="@dimen/common_spacing"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-
         app:layout_constraintBottom_toBottomOf="@id/barrier"
         tools:srcCompat="@sample/posts.json/data/authorAvatar"/>
+
     <TextView
         android:id="@+id/txtAuthor"
         android:layout_width="0dp"
@@ -84,45 +84,32 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="txtContent"/>
 
-    <ImageButton
-        android:id="@+id/imgLike"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
-        android:background="@android:color/transparent"
+        android:text="111"
+        style="@style/AppCheckableButton"
         android:contentDescription="@string/description_post_like"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier2"
-        app:srcCompat="@drawable/ic_favorite_24"/>
-    <TextView
-        android:id="@+id/txtLikes"
+        app:iconTint="@color/selector_like_color"
+        app:icon="@drawable/selector_like"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
-        app:layout_constraintTop_toTopOf="@id/imgLike"
-        app:layout_constraintStart_toEndOf="@+id/imgLike"
-        app:layout_constraintBottom_toBottomOf="@+id/imgLike"
-        tools:text="@sample/posts.json/data/likes"/>
-    <ImageButton
-        android:id="@+id/imgShare"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_spacing"
-        android:background="@android:color/transparent"
+        android:text="111"
+        style="@style/AppCheckableButton"
         android:contentDescription="@string/description_post_share"
-        app:layout_constraintStart_toEndOf="@+id/txtLikes"
-        app:layout_constraintTop_toTopOf="@+id/txtLikes"
-        app:layout_constraintBottom_toBottomOf="@+id/txtLikes"
-        app:srcCompat="@drawable/ic_share_24"/>
-    <TextView
-        android:id="@+id/txtShare"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_spacing"
-        app:layout_constraintTop_toTopOf="@+id/imgShare"
-        app:layout_constraintBottom_toBottomOf="@+id/imgShare"
-        app:layout_constraintStart_toEndOf="@+id/imgShare"
-        tools:text="@sample/posts.json/data/share"/>
+        app:layout_constraintStart_toEndOf="@+id/btnLike"
+        app:layout_constraintTop_toTopOf="@+id/btnLike"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLike"
+        app:icon="@drawable/ic_share_24"
+        app:iconTint="@color/colorGrey"/>
 
     <TextView
         android:id="@+id/txtViews"
@@ -137,9 +124,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:layout_marginTop="@dimen/common_spacing"
         android:layout_marginEnd="@dimen/common_spacing"
-        app:layout_constraintTop_toBottomOf="@+id/barrier2"
+        app:layout_constraintTop_toTopOf="@+id/btnLike"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLike"
         app:layout_constraintEnd_toStartOf="@id/txtViews"
         app:srcCompat="@drawable/ic_views_24"/>
 
@@ -148,7 +135,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="@dimen/common_spacing"
-        app:layout_constraintTop_toBottomOf="@+id/imgLike"
+        app:layout_constraintTop_toBottomOf="@+id/btnLike"
         android:background="@color/colorPinkRed" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

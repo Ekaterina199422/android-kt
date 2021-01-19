@@ -1,5 +1,6 @@
 package ru.netologia.adapter
 
+import android.nfc.NfcAdapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -15,11 +16,10 @@ interface OnInteractionListener {
     fun onShare(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
-    fun onEditCancel(post: Post) {}
 }
 
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener,
+        private val onInteractionListener: OnInteractionListener,
 ): ListAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -33,8 +33,8 @@ class PostsAdapter(
 }
 
 class PostViewHolder(
-    private val binding: CardPostBinding,
-    private val onInteractionListener: OnInteractionListener,
+        private val binding: CardPostBinding,
+        private val onInteractionListener: OnInteractionListener,
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
@@ -42,16 +42,15 @@ class PostViewHolder(
             txtAuthor.text = post.author
             txtPublished.text = post.published
             txtContent.text = post.content
-            txtLikes.text = numbersString(post.likes)
-            txtShare.text = numbersString(post.share)
+            btnShare.text = numbersString(post.share)
 
-            imgLike.setImageResource(
-                if (post.likedByMe) R.drawable.ic_liked_24 else R.drawable.ic_favorite_24
-            )
-            imgLike.setOnClickListener {
+            btnLike.isChecked = post.likedByMe
+            btnLike.text = numbersString(post.likes)
+
+            btnLike.setOnClickListener {
                 onInteractionListener.onLike(post)
             }
-            imgShare.setOnClickListener {
+            btnShare.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
             imgMenu.setOnClickListener {
