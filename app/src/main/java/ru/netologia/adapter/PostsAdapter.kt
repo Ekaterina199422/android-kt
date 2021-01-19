@@ -1,6 +1,5 @@
 package ru.netologia.adapter
 
-import android.nfc.NfcAdapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -19,7 +18,7 @@ interface OnInteractionListener {
 }
 
 class PostsAdapter(
-        private val onInteractionListener: OnInteractionListener,
+    private val onInteractionListener: OnInteractionListener,
 ): ListAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -33,8 +32,8 @@ class PostsAdapter(
 }
 
 class PostViewHolder(
-        private val binding: CardPostBinding,
-        private val onInteractionListener: OnInteractionListener,
+    private val binding: CardPostBinding,
+    private val onInteractionListener: OnInteractionListener,
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(post: Post) {
