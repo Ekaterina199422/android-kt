@@ -3,45 +3,41 @@ package ru.netologia.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.netologia.dto.Post
-import ru.netologia.repository.PostRepository
+import ru.netologia.repository.IPostRepository
 import ru.netologia.repository.PostRepositoryInMemoryImpl
 
 
-private val empty = Post(
-    id = 0,
-    author = "",
-    content = "",
-    published = "",
-    likedByMe = false,
-    likes = 0,
-    share = 0
-)
-
 class PostViewModel : ViewModel() {
-    private val repository: PostRepository = PostRepositoryInMemoryImpl()
+    private val empty = Post (
+            id = 0,
+            content = "",
+            author = "",
+            published = "",
+            videoUrl = null
+    )
+    private val repository: IPostRepository = PostRepositoryInMemoryImpl()
     val data = repository.getAll()
-    val edited = MutableLiveData(empty)
-
-    fun save(){
+    private val edited = MutableLiveData(empty)
+    fun like(id: Long) = repository.like(id)
+    fun share(id: Long) = repository.share(id)
+    fun removePost(id: Long) = repository.removePost(id)
+    fun savePost() {
         edited.value?.let {
-            repository.save(it)
+            repository.savePost(it)
         }
         edited.value = empty
     }
 
-    fun edit(post: Post) {
-        edited.value = post
-
-    }
-
-    fun changeContent(content: String){
+    fun changeContent(content: String) {
         val text = content.trim()
-        if (edited.value?.content == text){
+        if (edited.value?.content == text) {
             return
         }
         edited.value = edited.value?.copy(content = text)
     }
-    fun likeById(id: Long) = repository.likeById(id)
-    fun shareById(id: Long) = repository.shareById(id)
-    fun removeById(id: Long) = repository.removeById(id)
+
+    fun editContent(post: Post) {
+        edited.value = post
+    }
+
 }

@@ -1,106 +1,100 @@
 package ru.netologia
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
-import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
-import ru.netologia.adapter.OnInteractionListener
+import androidx.lifecycle.observe
+import ru.netologia.adapter.IOnInteractionListener
 import ru.netologia.adapter.PostsAdapter
 import ru.netologia.databinding.ActivityMainBinding
 import ru.netologia.dto.Post
-import ru.netologia.util.AndroidUtils
 import ru.netologia.viewmodel.PostViewModel
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        private const val NEW_POST_REQUEST_CODE = 1
-        private const val EDIT_POST_REQUEST_CODE = 1
-    }
-
-    private val viewModel: PostViewModel by viewModels()
-    private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
-    }
+    private val editPostRequestCode = 1
+    private val newPostRequestCode = 2
+    val viewModel: PostViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val adapter = PostsAdapter(object : OnInteractionListener {
+
+        val adapter = PostsAdapter(object : IOnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                viewModel.like(post.id)
             }
 
             override fun onShare(post: Post) {
-                Intent(Intent.ACTION_SEND)
-                    .putExtra(Intent.EXTRA_TEXT, post.content)
-                    .setType("text/plain")
-                    .also {
-                        if (it.resolveActivity(packageManager) == null) {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "app not found",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            Intent.createChooser(it, "Show text")
-                                .also(::startActivity)
-                        }
-                    }
+                viewModel.share(post.id)
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(
+                        intent,
+                        getString(R.string.chooser_share_post)
+                )
+                startActivity(shareIntent)
             }
 
             override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
+                viewModel.removePost(post.id)
+            }
+
+            override fun playVideoPost(post: Post) {
+                val videoIntent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoUrl))
+                startActivity(videoIntent)
             }
 
             override fun onEdit(post: Post) {
-                viewModel.edit(post)
+                viewModel.editContent(post)
+                val intent = Intent(this@MainActivity, EditPost::class.java)
+                intent.putExtra("author", post.author)
+                intent.putExtra("published", post.published)
+                intent.putExtra("content", post.content)
+                startActivityForResult(intent, editPostRequestCode)
             }
         })
 
-        binding.listView.adapter = adapter
+        binding.fab.setOnClickListener {
+            val intent = Intent(this, AddNewPost::class.java)
+            startActivityForResult(intent, newPostRequestCode)
+        }
+
+        binding.rvPostList.adapter = adapter
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
         }
-        viewModel.edited.observe(this) { post ->
-            if (post.id == 0L) {
-                return@observe
-            }
 
-            startActivityForResult(
-                Intent(this, EditPostActivity::class.java)
-                    .putExtra(EditPostActivity.EDIT_CONTENT, post.content),
-                EDIT_POST_REQUEST_CODE
-            )
-        }
-
-        binding.btnAddPost.setOnClickListener {
-            startActivityForResult(
-                Intent(this, NewPostActivity::class.java), NEW_POST_REQUEST_CODE
-            )
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == NEW_POST_REQUEST_CODE && requestCode == EDIT_POST_REQUEST_CODE
-            && resultCode == RESULT_OK && data != null) {
-            val text = data.getStringExtra(Intent.EXTRA_TEXT)
-            if (text.isNullOrBlank()) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.error_empty_content),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
+        when (requestCode) {
+            editPostRequestCode -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
+                data?.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                    viewModel.changeContent(it)
+                    viewModel.savePost()
+                }
             }
-            viewModel.changeContent(text.toString())
-            viewModel.save()
-            AndroidUtils.hideKeyboard(binding.root)
+            newPostRequestCode -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
+                data?.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                    viewModel.changeContent(it)
+                    viewModel.savePost()
+                }
+            }
         }
     }
+
 }

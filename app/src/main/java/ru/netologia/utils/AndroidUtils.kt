@@ -1,4 +1,4 @@
-package ru.netologia.util
+package ru.netologia.utils
 
 import android.content.Context
 import android.view.View

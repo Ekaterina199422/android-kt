@@ -1,28 +1,28 @@
 package ru.netologia.adapter
 
+
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netologia.R
-import ru.netologia.databinding.CardPostBinding
+import ru.netologia.databinding.PostCardBinding
 import ru.netologia.dto.Post
 
-interface OnInteractionListener {
-    fun onLike(post: Post) {}
-    fun onShare(post: Post) {}
-    fun onEdit(post: Post) {}
-    fun onRemove(post: Post) {}
-}
-
 class PostsAdapter(
-    private val onInteractionListener: OnInteractionListener,
-): ListAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
+    private val onInteractionListener: IOnInteractionListener
+) : ListAdapter<Post, PostViewHolder>(PostDiffCallback()) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding, onInteractionListener)
+        val postView = PostCardBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return PostViewHolder(postView, onInteractionListener)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -32,68 +32,63 @@ class PostsAdapter(
 }
 
 class PostViewHolder(
-    private val binding: CardPostBinding,
-    private val onInteractionListener: OnInteractionListener,
-): RecyclerView.ViewHolder(binding.root) {
-
+    private val binding: PostCardBinding,
+    private val onInteractionListener: IOnInteractionListener
+) : RecyclerView.ViewHolder(binding.root) {
     fun bind(post: Post) {
         binding.apply {
-            txtAuthor.text = post.author
-            txtPublished.text = post.published
-            txtContent.text = post.content
-            btnShare.text = numbersString(post.share)
-
-            btnLike.isChecked = post.likedByMe
-            btnLike.text = numbersString(post.likes)
-
-            btnLike.setOnClickListener {
-                onInteractionListener.onLike(post)
+            author.text = post.author
+            published.text = post.published
+            content.text = post.content
+            likes.text = formatCountToStr(post.likes)
+            share.text = formatCountToStr(post.share)
+            chatCount.text = formatCountToStr(post.chat)
+            viewCount.text = formatCountToStr(post.views)
+            if (post.likes > 0) likes.isChecked = post.likedByMe
+            if(post.videoUrl != null) {
+                binding.frameVideoView.visibility = View.VISIBLE
+            } else {
+                binding.frameVideoView.visibility = View.GONE
             }
-            btnShare.setOnClickListener {
-                onInteractionListener.onShare(post)
-            }
-            imgMenu.setOnClickListener {
+            menuPost.setOnClickListener {
                 PopupMenu(it.context, it).apply {
-                    inflate(R.menu.options_post)
-                    setOnMenuItemClickListener {item ->
-                        when(item.itemId){
-                            R.id.remove -> {
+                    inflate(R.menu.option_menu_post)
+                    setOnMenuItemClickListener { item ->
+                        when(item.itemId) {
+                            R.id.postRemove -> {
                                 onInteractionListener.onRemove(post)
                                 true
                             }
-                            R.id.edit -> {
+                            R.id.postEdit -> {
                                 onInteractionListener.onEdit(post)
                                 true
                             }
                             else -> false
                         }
-
                     }
                 }.show()
             }
-        }
-    }
 
-    fun numbersString(number: Int): String {
-        return when (number) {
-            in 0..999 -> number.toString()
-            in 1_000..9_999 -> if ((number / 100) % 10 == 0) {
-                (number / 1_000).toString() + "K"
-            } else {
-                String.format("%.1f", number * 1.0 / 1_000) + "K"
+            likes.setOnClickListener {
+                onInteractionListener.onLike(post)
+
             }
-            in 10_000..999_999 -> (number / 1_000).toString() + "K"
-            else -> if ((number / 100_000) % 10 == 0) {
-                (number / 1000_000).toString() + "M"
-            } else {
-                String.format("%.1f", number * 1.0 / 1000_000) + "M"
+            share.setOnClickListener {
+                onInteractionListener.onShare(post)
+            }
+
+            binding.frameVideoView.setOnClickListener {
+                onInteractionListener.playVideoPost(post)
+            }
+            binding.buttonPlay.setOnClickListener {
+                onInteractionListener.playVideoPost(post)
             }
 
         }
     }
 }
 
-class PostDiffCallBack: DiffUtil.ItemCallback<Post>() {
+class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
         return oldItem.id == newItem.id
     }
@@ -102,4 +97,26 @@ class PostDiffCallBack: DiffUtil.ItemCallback<Post>() {
         return oldItem == newItem
     }
 
+}
+
+private fun formatCountToStr(value: Int): String {
+    return when (value / 1000) {
+        0 -> "$value"
+        in 1..9 -> {
+            val str = "%.1f".format(value / 1000.0)
+                .dropLastWhile { it == '0' }
+                .dropLastWhile { it == '.' }
+            "${str}K"
+        }
+        in 10..999 -> {
+            val res = value / 1000
+            "${res}K"
+        }
+        else -> {
+            val str = "%.1f".format(value / 1000000.0)
+                .dropLastWhile { it == '0' }
+                .dropLastWhile { it == '.' }
+            "${str}М"
+        }
+    }
 }
