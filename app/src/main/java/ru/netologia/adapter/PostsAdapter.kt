@@ -44,10 +44,11 @@ class PostViewHolder(
             share.text = formatCountToStr(post.share)
             chatCount.text = formatCountToStr(post.chat)
             viewCount.text = formatCountToStr(post.views)
-            if (post.likes > 0) likes.isChecked = post.likedByMe
-            if(post.videoUrl != null) {
-                binding.frameVideoView.visibility = View.VISIBLE
+            if (post.likes > 0) likes.isChecked = post.likedByMe else likes.isChecked = false
+            if(post.videoUrl == "") {
+                binding.frameVideoView.visibility = View.GONE
             } else {
+                binding.frameVideoView.visibility = View.VISIBLE
                 binding.frameVideoView.visibility = View.GONE
             }
             binding.root.setOnClickListener {

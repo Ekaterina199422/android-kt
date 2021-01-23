@@ -37,7 +37,7 @@ class PostReview : Fragment() {
         binding.content.text = arguments?.content
         binding.author.text = arguments?.author
         binding.published.text = arguments?.published
-        if (arguments?.videoUrl != null) {
+        if (arguments?.videoUrl != "") {
             binding.frameVideoView.visibility = View.VISIBLE
         } else {
             binding.frameVideoView.visibility = View.GONE

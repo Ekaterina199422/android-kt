@@ -3,19 +3,27 @@ package ru.netologia.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import ru.netologia.db.AppDb
 import ru.netologia.dto.Post
 import ru.netologia.repository.IPostRepository
-import ru.netologia.repository.PostRepositoryFileImpl
+import ru.netologia.repository.PostRepositorySQLiteImpl
+
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
+    var isHandledBackPressed: String = ""
+
     private val empty = Post(
             id = 0,
             content = "",
             author = "",
             published = "",
-            videoUrl = null
+            videoUrl = ""
     )
-    private val repository: IPostRepository = PostRepositoryFileImpl(application)
+    private val repository: IPostRepository = PostRepositorySQLiteImpl(
+            AppDb.getInstance(application)
+                    .postDao
+    )
+
     val data = repository.getAll()
     private val edited = MutableLiveData(empty)
     fun like(id: Long) = repository.like(id)
