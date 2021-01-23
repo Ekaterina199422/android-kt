@@ -6,7 +6,7 @@
         android:state_checked="true"/>
 
     <item
-        android:drawable="@drawable/ic_thumb_up_24"/>
-
+        android:drawable="@drawable/ic_thumb_up_24"
+        android:state_checked="false"/>
 
 </selector>

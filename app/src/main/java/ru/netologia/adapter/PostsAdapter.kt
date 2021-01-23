@@ -50,6 +50,9 @@ class PostViewHolder(
             } else {
                 binding.frameVideoView.visibility = View.GONE
             }
+            binding.root.setOnClickListener {
+                onInteractionListener.onPostItemClick(post)
+            }
             menuPost.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_menu_post)

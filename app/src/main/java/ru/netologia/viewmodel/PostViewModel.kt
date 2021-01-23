@@ -8,7 +8,7 @@ import ru.netologia.repository.IPostRepository
 import ru.netologia.repository.PostRepositoryFileImpl
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val empty = Post (
+    private val empty = Post(
             id = 0,
             content = "",
             author = "",
@@ -21,6 +21,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun like(id: Long) = repository.like(id)
     fun share(id: Long) = repository.share(id)
     fun removePost(id: Long) = repository.removePost(id)
+
     fun savePost() {
         edited.value?.let {
             repository.savePost(it)

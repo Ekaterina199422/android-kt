@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/common_spacing"
-    tools:context=".AddNewPost">
+    tools:context=".EditPost">
 
     <ImageView
         android:id="@+id/avatar"
@@ -18,29 +18,43 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/posts_avatars_drawable" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrierTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="add_new_post_text,avatar" />
-
     <TextView
-        android:id="@+id/add_new_post_text"
+        android:id="@+id/author"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_spacing"
         android:layout_marginEnd="@dimen/common_spacing"
         android:ellipsize="end"
         android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/published"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/text_add_new_post" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="@sample/posts.json/data/author" />
 
+    <TextView
+        android:id="@+id/published"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_spacing"
+        android:layout_marginEnd="@dimen/common_spacing"
+        android:layout_marginBottom="@dimen/common_spacing"
+        app:layout_constraintBottom_toBottomOf="@id/barrierTop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/avatar"
+        app:layout_constraintTop_toBottomOf="@id/author"
+        tools:text="@sample/posts.json/data/published" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrierTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="avatar,published" />
 
     <EditText
-        android:id="@+id/new_content"
+        android:id="@+id/edit_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
@@ -59,31 +73,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="btn_save_new_post,btn_cancel_add_post" />
+        app:constraint_referenced_ids="btn_save_post" />
 
     <ImageButton
-        android:id="@+id/btn_save_new_post"
+        android:id="@+id/btn_save_post"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_add_post_48"
-        app:layout_constraintEnd_toStartOf="@+id/btn_cancel_add_post"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_post_48"
         app:layout_constraintStart_toStartOf="parent"
         android:padding="@dimen/common_spacing"
         android:contentDescription="@string/btn_save_post"/>
 
-    <ImageButton
-        android:id="@+id/btn_cancel_add_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:srcCompat = "@drawable/ic_cancel_48"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_save_new_post"
-        android:padding="@dimen/common_spacing"
-        android:contentDescription="@string/cancel_edit" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
