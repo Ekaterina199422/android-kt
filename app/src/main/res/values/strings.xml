@@ -18,5 +18,8 @@
     <string name="add_post">Add post</string>
     <string name="text_add_new_post">Add new Post</string>
     <string name="description_video_play">video play</string>
+    <string name="message_status_empty">Empty</string>
+    <string name="message_status_error">Network Error</string>
+    <string name="button_retry">Retry</string>
 
 </resources>

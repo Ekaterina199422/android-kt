@@ -18,5 +18,9 @@
     <string name="add_post">Создать пост</string>
     <string name="text_add_new_post">Создание нового поста</string>
     <string name="description_video_play">Запустить видео</string>
+    <string name="message_status_empty">Пусто</string>
+    <string name="message_status_error">Ошибка сети</string>
+    <string name="button_retry">Retry</string>
+
 
 </resources>
