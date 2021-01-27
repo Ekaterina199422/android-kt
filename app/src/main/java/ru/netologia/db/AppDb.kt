@@ -1,12 +1,15 @@
 package ru.netologia.db
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import ru.netologia.dao.PostDao
-import ru.netologia.dao.PostDaoImpl
+import ru.netologia.dto.PostEntity
 
-class AppDb private constructor(db: SQLiteDatabase) {
-    val postDao: PostDao = PostDaoImpl(db)
+@Database(entities = [PostEntity::class], version = 1)
+abstract class AppDb : RoomDatabase() {
+    abstract fun postDao(): PostDao
 
     companion object {
         @Volatile
@@ -14,15 +17,16 @@ class AppDb private constructor(db: SQLiteDatabase) {
 
         fun getInstance(context: Context): AppDb {
             return instance ?: synchronized(this) {
-                instance ?: AppDb(buildDatabase(context, arrayOf(PostDaoImpl.DDL)))
+                instance ?: buildDatabase(context).also { instance = it }
             }
         }
 
-        private fun buildDatabase(context: Context, DDLs: Array<String>) = DbHelper (
-                context, 1, "app.db", DDLs
-        ).writableDatabase
+        private fun buildDatabase(context: Context) =
+            Room.databaseBuilder(context, AppDb::class.java, "app.db")
+                .allowMainThreadQueries()
+                .build()
+       }
 
     }
 
 
-}

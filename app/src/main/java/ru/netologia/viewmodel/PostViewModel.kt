@@ -21,7 +21,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     )
     private val repository: IPostRepository = PostRepositorySQLiteImpl(
             AppDb.getInstance(application)
-                    .postDao
+                    .postDao()
     )
 
     val data = repository.getAll()
