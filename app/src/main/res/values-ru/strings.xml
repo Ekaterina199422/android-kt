@@ -1,5 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NMedia</string>
-    <string name="nmedia">НМедиа!</string>
+    <string name="app_name">НМедиа</string>
+    <string name="nmedia_text">НМедиа</string>
+    <string name="description_post_author_avatar">Аватар автора поста</string>
+    <string name="description_post_menu">Меню поста</string>
+    <string name="post_remove_menu">Удалить</string>
+    <string name="edit_post_text">Текст поста</string>
+    <string name="btn_save_post">Сохранить</string>
+    <string name="error_empty_post">Контент не может быть пустым</string>
+    <string name="btn_post_edit">Редактировать</string>
+    <string name="activity_edit_post">Редактируемый пост</string>
+    <string name="edit_message">Редактируемое сообщение</string>
+    <string name="cancel_edit">Отменить редактирование</string>
+    <string name="author_message_edit">Автор сообщения</string>
+    <string name="description_chats_item">Chats Item</string>
+    <string name="description_view_item">View Item</string>
+    <string name="chooser_share_post">Поделиться</string>
+    <string name="add_post">Создать пост</string>
+    <string name="text_add_new_post">Создание нового поста</string>
+    <string name="description_video_play">Запустить видео</string>
+
 </resources>
