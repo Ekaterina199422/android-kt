@@ -18,5 +18,10 @@
     <string name="add_post">Создать пост</string>
     <string name="text_add_new_post">Создание нового поста</string>
     <string name="description_video_play">Запустить видео</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="notification_error">Notification %1$s не соответствует ни одному значению Action</string>
+    <string name="notification_user_add">%1$s опубликовал новый пост:</string>
 
 </resources>
