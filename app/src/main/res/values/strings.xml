@@ -1,4 +1,25 @@
 <resources>
     <string name="app_name">NMedia</string>
-    <string name="nmedia" translatable="false">NMedia!</string>
+    <string name="nmedia_text">NMedia</string>
+    <string name="description_post_author_avatar">Post author avatar</string>
+    <string name="description_post_menu">Post menu</string>
+    <string name="post_remove_menu">Remove</string>
+    <string name="edit_post_text">Post text</string>
+    <string name="btn_save_post">Save</string>
+    <string name="error_empty_post">Content can\'t be empty</string>
+    <string name="btn_post_edit">Edit</string>
+    <string name="activity_edit_post">Activity edit post</string>
+    <string name="edit_message">Edit Message</string>
+    <string name="cancel_edit">cancel edit</string>
+    <string name="author_message_edit">Author message edit</string>
+    <string name="description_chats_item">Chats Item</string>
+    <string name="description_view_item">View Item</string>
+    <string name="chooser_share_post">Share post</string>
+    <string name="add_post">Add post</string>
+    <string name="text_add_new_post">Add new Post</string>
+    <string name="description_video_play">video play</string>
+    <string name="message_status_empty">Empty</string>
+    <string name="message_status_error">Network Error</string>
+    <string name="button_retry">Retry</string>
+
 </resources>
