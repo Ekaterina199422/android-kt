@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netologia.R
 import ru.netologia.databinding.PostCardBinding
-import ru.netologia.dto*
+import ru.netologia.dto.Post
 
 class PostsAdapter(
     private val onInteractionListener: IOnInteractionListener

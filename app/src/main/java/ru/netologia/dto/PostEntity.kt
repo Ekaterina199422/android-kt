@@ -49,3 +49,4 @@ fun PostEntity.toPost(): Post =
         videoUrl,
         likedByMe
     )
+

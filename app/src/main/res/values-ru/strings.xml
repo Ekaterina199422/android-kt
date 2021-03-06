@@ -23,5 +23,7 @@
     <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
     <string name="notification_error">Notification %1$s не соответствует ни одному значению Action</string>
     <string name="notification_user_add">%1$s опубликовал новый пост:</string>
-
+    <string name="message_status_empty">Пусто</string>
+    <string name="message_status_error">Ошибка сети</string>
+    <string name="button_retry">Retry</string>
 </resources>

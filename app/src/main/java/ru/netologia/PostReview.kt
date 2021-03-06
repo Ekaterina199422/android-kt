@@ -28,9 +28,9 @@ class PostReview : Fragment() {
 
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentPostReviewBinding.inflate(layoutInflater)
 
@@ -55,11 +55,11 @@ class PostReview : Fragment() {
                         }
                         R.id.postEdit -> {
                             findNavController().navigate(R.id.action_postReview_to_editPost,
-                                Bundle().apply {
-                                    authorEdit = arguments?.author
-                                    publishedEdit = arguments?.published
-                                    contentEdit = arguments?.content
-                                })
+                                    Bundle().apply {
+                                        authorEdit = arguments?.author
+                                        publishedEdit = arguments?.published
+                                        contentEdit = arguments?.content
+                                    })
                             true
                         }
                         else -> false

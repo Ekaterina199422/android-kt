@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -25,7 +26,7 @@ import ru.netologia.dto.Post
 import ru.netologia.viewmodel.PostViewModel
 
 
-class FeedFragment : Fragment() {
+class  FeedFragment : Fragment() {
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
@@ -86,13 +87,26 @@ class FeedFragment : Fragment() {
             }
         })
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.refreshingPosts()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_addNewPost)
         }
-
         binding.rvPostList.adapter = adapter
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts)
+
+
+        viewModel.state.observe(viewLifecycleOwner) { model ->
+            adapter.submitList(model.posts)
+            binding.groupStatus.isVisible = model.error
+            binding.tvTextStatusEmpty.isVisible = model.empty
+            binding.pbProgress.isVisible = model.loading
+
+        }
+        binding.errorButton.setOnClickListener {
+            viewModel.loadPosts()
         }
         return binding.root
     }
