@@ -1,14 +1,34 @@
 package ru.netologia.repository
 
-import androidx.lifecycle.LiveData
-import ru.netologia.dto.*
+import ru.netologia.dto*
 
 interface IPostRepository {
 
-    fun getAll(): LiveData<List<Post>>
-    fun like(id: Long)
-    fun removePost(id: Long)
-    fun savePost(post: Post)
-    fun share(id: Long)
+    fun getAllAsync(callback: GetAllCallback)
+    fun unLikeById(id: Long, callback: LikeByIdCallback)
+    fun likeById(post: Post, callback: LikeByIdCallback)
+    fun removePost(id: Long, callback: RemovePostCallback)
+    fun savePost(post: Post, callback: SavePostCallback)
+
+
+    interface GetAllCallback {
+        fun onSuccess(posts: List<Post>)
+        fun onError(e: Exception)
+    }
+
+    interface LikeByIdCallback {
+        fun onSuccess(post: Post)
+        fun onError(e: Exception)
+    }
+
+    interface RemovePostCallback {
+        fun onSuccess()
+        fun onError(e: Exception)
+    }
+
+    interface SavePostCallback {
+        fun onSuccess(post: Post)
+        fun onError(e: Exception)
+    }
 
 }

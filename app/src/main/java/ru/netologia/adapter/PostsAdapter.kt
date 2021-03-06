@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.netologia.R
 import ru.netologia.databinding.PostCardBinding
-import ru.netologia.dto.Post
+import ru.netologia.dto*
 
 class PostsAdapter(
     private val onInteractionListener: IOnInteractionListener
@@ -46,14 +46,15 @@ class PostViewHolder(
             viewCount.text = formatCountToStr(post.views)
             if (post.likes > 0) likes.isChecked = post.likedByMe else likes.isChecked = false
             if(post.videoUrl == "") {
-                binding.frameVideoView.visibility = View.GONE
+                frameVideoView.visibility = View.GONE
             } else {
                 binding.frameVideoView.visibility = View.VISIBLE
-                binding.frameVideoView.visibility = View.GONE
             }
+
             binding.root.setOnClickListener {
                 onInteractionListener.onPostItemClick(post)
             }
+
             menuPost.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_menu_post)
