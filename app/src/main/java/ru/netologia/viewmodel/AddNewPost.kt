@@ -23,28 +23,28 @@ class AddNewPost : Fragment() {
 
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentAddNewPostBinding.inflate(layoutInflater)
         requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    viewModel.isHandledBackPressed = binding.newContent.text.toString()
-                    findNavController().popBackStack(R.id.feedFragment, false)
-                }
-            })
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        viewModel.isHandledBackPressed = binding.newContent.text.toString()
+                        findNavController().popBackStack(R.id.feedFragment, false)
+                    }
+                })
         binding.newContent.requestFocus()
         binding.newContent.setText(viewModel.isHandledBackPressed)
         binding.btnSaveNewPost.setOnClickListener {
             with(binding.newContent) {
                 if (TextUtils.isEmpty(text)) {
                     Toast.makeText(
-                        context,
-                        context.getString(R.string.error_empty_post),
-                        Toast.LENGTH_LONG
+                            context,
+                            context.getString(R.string.error_empty_post),
+                            Toast.LENGTH_LONG
                     ).show()
                     return@setOnClickListener
                 }
@@ -52,13 +52,12 @@ class AddNewPost : Fragment() {
                 viewModel.savePost()
                 viewModel.isHandledBackPressed = ""
                 AndroidUtils.hideKeyboard(requireView())
-                viewModel.postCreated.observe(viewLifecycleOwner) {
-                    viewModel.loadPosts()
-                    findNavController().navigateUp()
-                }
+                findNavController().navigateUp()
             }
+        }
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
         }
         return binding.root
     }
-
 }

@@ -8,6 +8,7 @@ data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
+    val authorAvatar: String,
     val content: String,
     val published: String,
     val likes: Int = 0,
@@ -23,6 +24,7 @@ data class PostEntity(
                 PostEntity(
                     id,
                     author,
+                    authorAvatar,
                     content,
                     published,
                     likes,
@@ -40,6 +42,7 @@ fun PostEntity.toPost(): Post =
     Post(
         id,
         author,
+        authorAvatar,
         content,
         published,
         likes,
