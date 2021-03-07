@@ -9,16 +9,17 @@ import ru.netologia.model.FeedModel
 import ru.netologia.repository.IPostRepository
 import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
-import java.io.IOException
-import kotlin.concurrent.thread
+
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
+
     var isHandledBackPressed: String = ""
 
     private val empty = Post(
             id = 0,
             content = "",
-            author = "",
+            author = "Me",
+            authorAvatar = "",
             published = "",
             videoUrl = ""
     )
@@ -27,75 +28,117 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val state: LiveData<FeedModel>
         get() = _state
     private val edited = MutableLiveData(empty)
-    private val _postsRefresh = SingleLiveEvent<Unit>()
-    val postsRefresh: LiveData<Unit>
-        get() = _postsRefresh
+    private val _postsRefreshError = SingleLiveEvent<Unit>()
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
-
 
     init {
         loadPosts()
     }
 
-    fun like(id: Long) {
-        thread {
-            repository.likeById(id)
+    fun like(post: Post) {
+        if (post.likedByMe) {
+            repository.unLikeById(post.id, object : IPostRepository.LikeByIdCallback {
+                override fun onSuccess(post: Post) {
+                    _state.postValue(
+                            FeedModel(posts = _state.value?.posts.orEmpty().map {
+                                if (it.id != post.id) it else it.copy(
+                                        likes = post.likes,
+                                        likedByMe = post.likedByMe,
+                                        videoUrl = "test"
+                                )
+                            })
+                    )
+                }
+
+                override fun onError(e: Exception) {
+                    _state.value = FeedModel(error = true)
+                }
+            })
+        } else {
+            repository.likeById(post, object : IPostRepository.LikeByIdCallback {
+                override fun onSuccess(post: Post) {
+                    _state.postValue(
+                            FeedModel(posts = _state.value?.posts.orEmpty().map {
+                                if (it.id != post.id) it else it.copy(
+                                        likes = post.likes,
+                                        likedByMe = post.likedByMe,
+                                        videoUrl = "test"
+                                )
+                            })
+                    )
+                }
+
+                override fun onError(e: Exception) {
+                    _state.value = FeedModel(error = true)
+                }
+            })
         }
     }
-    fun share(id: Long) = repository.share(id)
+
     fun removePost(id: Long) {
-        thread {
-            val old = _state.value?.posts.orEmpty()
-            _state.postValue(
-                    _state.value?.copy(posts = _state.value?.posts.orEmpty()
-                            .filter { it.id != id }
-                    )
-            )
-            try {
-                repository.removePost(id)
-            } catch (e: IOException) {
-                _state.postValue(_state.value?.copy(posts = old))
+        val old = _state.value?.posts.orEmpty()
+        repository.removePost(id, object : IPostRepository.RemovePostCallback {
+            override fun onSuccess() {
+                _state.postValue(
+                        FeedModel(posts = _state.value?.posts.orEmpty()
+                                .filter { it.id != id }
+                        )
+                )
             }
-        }
+
+            override fun onError(e: Exception) {
+                _state.postValue(FeedModel(posts = old))
+            }
+
+        })
     }
 
     fun refreshingPosts() {
-        thread {
-            _state.postValue(FeedModel(refreshing = true))
-            val old = _state.value?.posts.orEmpty()
-            try {
-                val posts = repository.getAll()
+        val old = _state.value?.posts.orEmpty()
+        _state.value = FeedModel(refreshing = true)
+        repository.getAllAsync(object : IPostRepository.GetAllCallback {
+            override fun onSuccess(posts: List<Post>) {
                 _state.postValue(FeedModel(posts = posts))
-            } catch (e: IOException) {
-                _state.postValue(_state.value?.copy(posts = old))
-                _postsRefresh.postValue(Unit)
-                _state.postValue(FeedModel(refreshing = false))
             }
-        }
+
+            override fun onError(e: Exception) {
+                _state.value?.copy(refreshing = false)
+                _state.postValue(FeedModel(posts = old))
+                _postsRefreshError.postValue(Unit)
+            }
+
+        })
     }
 
     fun loadPosts() {
-        thread {
-            _state.postValue(FeedModel(loading = true))
-            try {
-                val posts = repository.getAll()
+        _state.value = FeedModel(loading = true)
+        repository.getAllAsync(object : IPostRepository.GetAllCallback {
+            override fun onSuccess(posts: List<Post>) {
                 _state.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
-            } catch (e: IOException) {
+            }
+
+            override fun onError(e: Exception) {
                 _state.postValue(FeedModel(error = true))
-            }.also { _state::postValue }
-        }
+            }
+        })
     }
 
     fun savePost() {
-        edited.value?.let {
-            thread {
-                repository.savePost(it)
-                _postCreated.postValue(Unit)
-            }
+        edited.value?.let {post ->
+            repository.savePost(post, object : IPostRepository.SavePostCallback {
+                override fun onSuccess(post: Post) {
+                    _state.postValue(_state.value?.posts?.let {
+                        FeedModel(posts = it.plus(post))
+                    })
+                }
+
+                override fun onError(e: Exception) {
+                    _postCreated.postValue(Unit)
+                }
+            })
         }
-        edited.value = empty
     }
 
     fun changeContent(content: String) {
