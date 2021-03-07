@@ -23,4 +23,7 @@
     <string name="notification_user_liked">User %1$s liked %2$s\'s post</string>
     <string name="notification_error">Notification %1$s does not match any value Action</string>
     <string name="notification_user_add">%1$s published a new post:</string>
+    <string name="message_status_empty">Empty</string>
+    <string name="message_status_error">Network Error</string>
+    <string name="button_retry">Retry</string>
 </resources>

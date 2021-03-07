@@ -1,25 +1,23 @@
 package ru.netologia.repository
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import ru.netologia.dao.PostDao
 import ru.netologia.dto.Post
 import ru.netologia.dto.PostEntity
-import ru.netologia.dto.toPost
 
 class PostRepositorySQLiteImpl(
         private val dao: PostDao
 ) : IPostRepository {
-    override fun getAll(): LiveData<List<Post>> = dao.getAll().map { list ->
-        list.map {
-            it.toPost()
-        }
+
+    override fun getAll() : List<Post> { //= dao.getAll().map { list ->
+//        list.map {
+//            it.toPost()
+        TODO("")
+//        }
+
     }
 
-
-
-    override fun like(id: Long) {
+    override fun likeById(id: Long) {
         dao.likeById(id)
 
     }
