@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import ru.netologia.dto.*
+import ru.netologia.dto.PostEntity
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Dao
 interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
     fun getAll(): LiveData<List<PostEntity>>

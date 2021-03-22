@@ -36,7 +36,7 @@ class  FeedFragment : Fragment() {
         val adapter = PostsAdapter(object : IOnInteractionListener {
 
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.like(post)
             }
 
             override fun onShare(post: Post) {
