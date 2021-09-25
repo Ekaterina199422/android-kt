@@ -5,9 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.netologia.dto.Post
+import ru.netologia.model.ApiError
 import ru.netologia.model.FeedModel
 import ru.netologia.repository.IPostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
+import ru.netologia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
 
 
@@ -32,6 +33,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+    private val _postCreatedError = SingleLiveEvent<ApiError>()
+    val postCreatedError: LiveData<ApiError>
+        get() = _postCreatedError
+    private val _postRemoveError = SingleLiveEvent<ApiError>()
+    val postRemoveError: LiveData<ApiError>
+        get() = _postRemoveError
+    private val _postLikeError = SingleLiveEvent<ApiError>()
+    val postLikeError: LiveData<ApiError>
+        get() = _postLikeError
 
     init {
         loadPosts()
@@ -52,12 +62,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     )
                 }
 
-                override fun onError(e: Exception) {
-                    _state.value = FeedModel(error = true)
+                override fun onError(e: ApiError) {
+                    _postLikeError.value = e
                 }
             })
         } else {
-            repository.likeById(post, object : IPostRepository.LikeByIdCallback {
+            repository.likeById(post.id, object : IPostRepository.LikeByIdCallback {
                 override fun onSuccess(post: Post) {
                     _state.postValue(
                             FeedModel(posts = _state.value?.posts.orEmpty().map {
@@ -70,8 +80,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     )
                 }
 
-                override fun onError(e: Exception) {
-                    _state.value = FeedModel(error = true)
+                override fun onError(e: ApiError) {
+                    _postLikeError.value = e
                 }
             })
         }
@@ -88,8 +98,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
 
-            override fun onError(e: Exception) {
+            override fun onError(e: ApiError) {
                 _state.postValue(FeedModel(posts = old))
+                _postRemoveError.value = e
             }
 
         })
@@ -103,7 +114,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _state.postValue(FeedModel(posts = posts))
             }
 
-            override fun onError(e: Exception) {
+            override fun onError(e: ApiError) {
                 _state.value?.copy(refreshing = false)
                 _state.postValue(FeedModel(posts = old))
                 _postsRefreshError.postValue(Unit)
@@ -119,8 +130,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _state.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }
 
-            override fun onError(e: Exception) {
-                _state.postValue(FeedModel(error = true))
+            override fun onError(e: ApiError) {
+                _state.postValue(FeedModel(errorVisible = true, error = e))
             }
         })
     }
@@ -134,8 +145,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     })
                 }
 
-                override fun onError(e: Exception) {
-                    _postCreated.postValue(Unit)
+                override fun onError(e: ApiError) {
+                    _postCreatedError.value = e
                 }
             })
         }

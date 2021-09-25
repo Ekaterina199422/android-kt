@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,7 @@ import ru.netologia.EditPost.Companion.authorEdit
 import ru.netologia.EditPost.Companion.contentEdit
 import ru.netologia.EditPost.Companion.publishedEdit
 import ru.netologia.databinding.FragmentPostReviewBinding
+import ru.netologia.model.getCreateReadableMessageError
 import ru.netologia.utils.StringArg
 import ru.netologia.viewmodel.PostViewModel
 
@@ -46,7 +48,19 @@ class PostReview : Fragment() {
                     when (item.itemId) {
                         R.id.postRemove -> {
                             arguments?.idPost?.toLong()?.let { id -> viewModel.removePost(id) }
-                            findNavController().navigateUp()
+                            viewModel.state.observe(viewLifecycleOwner) { model ->
+                                if (!model.loading && !model.errorVisible) {
+                                    findNavController().navigateUp()
+                                }
+                                viewModel.postRemoveError.observe(viewLifecycleOwner) { error ->
+                                    Toast.makeText(
+                                            requireContext(),
+                                            error.getCreateReadableMessageError(resources),
+                                            Toast.LENGTH_SHORT
+                                    )
+                                            .show()
+                                }
+                            }
                             true
                         }
                         R.id.postEdit -> {
