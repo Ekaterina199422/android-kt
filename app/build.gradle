@@ -39,7 +39,7 @@ android {
             }
             debug {
                 manifestPlaceholders.usesCleartextTraffic = true
-                buildConfigField "String", "BASE_URL", '"http://10.0.2.2:9999"'
+                buildConfigField "String", "BASE_URL", '"http://10.0.2.2:9999/api/"'
             }
         }
     }
@@ -63,7 +63,7 @@ android {
         def retrofit_version = "2.9.0"
         def retrofitgson_version = "2.9.0"
         def okhttploggin_version = "4.9.0"
-        def coroutines_version = "1.4.2"
+
 
         implementation fileTree(dir: "libs", include: ["*.jar"])
         implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
@@ -81,6 +81,7 @@ android {
         implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
         implementation "androidx.fragment:fragment-ktx:$ktx_version"
         kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
         def room_version = "2.2.5"
         kapt "androidx.room:room-compiler:$room_version"
         implementation "androidx.room:room-runtime:$room_version"
@@ -93,6 +94,8 @@ android {
         implementation "com.squareup.retrofit2:converter-gson:$retrofitgson_version"
         implementation "com.squareup.okhttp3:logging-interceptor:$okhttploggin_version"
         implementation "com.github.bumptech.glide:glide:$glide_version"
+
+        def coroutines_version = "1.4.2"
         implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
     }

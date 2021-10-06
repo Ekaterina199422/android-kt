@@ -1,8 +1,6 @@
 package ru.netologia.dto
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
+import androidx.room.*
 import ru.netologia.enumeration.PostState
 
 @Entity

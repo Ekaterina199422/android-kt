@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import ru.netologia.EditPost.Companion.authorEdit
 import ru.netologia.EditPost.Companion.contentEdit
@@ -31,7 +32,7 @@ class PostReview : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding = FragmentPostReviewBinding.inflate(layoutInflater)
 
         binding.content.text = arguments?.content
@@ -49,8 +50,6 @@ class PostReview : Fragment() {
                             viewModel.state.observe(viewLifecycleOwner) { model ->
                                 if (!model.loading && !model.errorVisible) {
                                     findNavController().navigateUp()
-
-
                                 }
                             }
                             true

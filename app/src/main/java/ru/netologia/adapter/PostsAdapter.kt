@@ -4,6 +4,7 @@ package ru.netologia.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide
 import ru.netologia.R
 import ru.netologia.databinding.PostCardBinding
 import ru.netologia.dto.Post
+import ru.netologia.enumeration.PostState
 
 
 class PostsAdapter(
@@ -52,6 +54,10 @@ class PostViewHolder(
                 .timeout(10_000)
                 .circleCrop()
                 .into(avatar)
+            btnErrorApiLoad.isVisible = post.state == PostState.Error
+            pbProgress.isVisible = post.state == PostState.Progress
+            ivStatus.isVisible = post.state == PostState.Success
+
          //   if (post.attachment != null && post.attachment?.type == AttachmentType.IMAGE) {
             //    frameAttachView.visibility = View.VISIBLE
              //   ivImageAttachPost.contentDescription = post.attachment?.description
@@ -66,7 +72,9 @@ class PostViewHolder(
             binding.root.setOnClickListener {
                 onInteractionListener.onPostItemClick(post)
             }
-
+            btnErrorApiLoad.setOnClickListener {
+                onInteractionListener.onRetrySendPost(post)
+            }
             menuPost.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_menu_post)

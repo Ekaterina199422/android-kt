@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import ru.netologia.dao.PostDao
 import ru.netologia.dto.PostEntity
 
 @Database(entities = [PostEntity::class], version = 1,exportSchema = false)
+@TypeConverters(value = [PostEntity.PostConverter::class])
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
 
