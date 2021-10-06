@@ -76,17 +76,28 @@
             android:layout_marginBottom="@dimen/common_spacing"
             android:autoLink="web"
             app:layout_constraintBottom_toTopOf="@id/frame_attach_view"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_error_api_load"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrierTop"
             tools:text="@sample/posts.json/data/content" />
+
+        <ImageButton
+            android:id="@+id/btn_error_api_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_error_outline_48"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barrierTop"
+            app:layout_constraintBottom_toTopOf="@+id/barrierMid"
+            app:layout_constraintStart_toEndOf="@+id/content" />
 
         <FrameLayout
             android:id="@+id/frame_attach_view"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="8dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/barrierMid"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,6 +120,14 @@
                 app:srcCompat="@drawable/ic_play_circle_48" />
 
         </FrameLayout>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:constraint_referenced_ids="barrierBottom, likes, share,chat, chatCount, view, viewCount" />
+
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrierMid"

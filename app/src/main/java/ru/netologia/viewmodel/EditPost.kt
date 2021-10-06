@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import ru.netologia.R
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -44,7 +43,7 @@ class EditPost : Fragment() {
                     ).show()
                     return@setOnClickListener
                 }
-                binding.editContent.text.toString()
+                //binding.editContent.text.toString()
                 viewModel.changeContent(binding.editContent.text.toString())
                 viewModel.savePost()
                 findNavController().navigate(R.id.action_editPost_to_feedFragment)

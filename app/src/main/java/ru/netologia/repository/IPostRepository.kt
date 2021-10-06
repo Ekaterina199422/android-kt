@@ -1,34 +1,17 @@
 package ru.netologia.repository
 
+import androidx.lifecycle.LiveData
 import ru.netologia.dto.Post
-import ru.netologia.model.ApiError
+import ru.netologia.dto.PostEntity
+
 
 interface IPostRepository {
 
-
-    fun getAllAsync(callback: GetAllCallback)
-    fun unLikeById(id: Long, callback: LikeByIdCallback)
-    fun likeById(id: Long, callback: LikeByIdCallback)
-    fun removePost(id: Long, callback: RemovePostCallback)
-    fun savePost(post: Post, callback: SavePostCallback)
-
-    interface GetAllCallback {
-        fun onSuccess(posts: List<Post>)
-        fun onError(e: ApiError)
+    val data: LiveData<List<Post>> // отвечает за предоставление данных в виде LiveData
+    suspend fun getAll(): List<Post>
+    suspend fun unLikeById(id: Long)
+    suspend fun likeById(id: Long)
+    suspend fun removePost(id: Long):Unit
+    suspend fun savePost(post: PostEntity):Long
+    suspend fun sendPost(post: Post): Post
     }
-    interface LikeByIdCallback {
-        fun onSuccess(post: Post)
-        fun onError(e: ApiError)
-    }
-
-    interface RemovePostCallback {
-        fun onSuccess()
-        fun onError(e: ApiError)
-    }
-
-    interface SavePostCallback {
-        fun onSuccess(post: Post)
-        fun onError(e: ApiError)
-    }
-
-}

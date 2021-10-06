@@ -9,4 +9,5 @@ interface IOnInteractionListener {
     fun onEdit(post: Post)
     fun playVideoPost(post: Post)
     fun onPostItemClick(post: Post)
+    fun onRetrySendPost(post: Post)
 }

@@ -2,21 +2,15 @@ package ru.netologia.adapter
 
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import ru.netologia.R
 import ru.netologia.databinding.PostCardBinding
-import ru.netologia.dto.*
-import androidx.annotation.Dimension
-import ru.netologia.enumeration.AttachmentType
+import ru.netologia.dto.Post
 
 
 class PostsAdapter(
@@ -58,17 +52,16 @@ class PostViewHolder(
                 .timeout(10_000)
                 .circleCrop()
                 .into(avatar)
-            if (post.attachment != null && post.attachment?.type == AttachmentType.IMAGE) {
-                frameAttachView.visibility = View.VISIBLE
-                ivImageAttachPost.contentDescription = post.attachment?.description
-                Glide.with(ivImageAttachPost)
-                    .load("http://10.0.2.2:9999/images/${post.attachment?.url}")
-                    .placeholder(R.drawable.ic_attach_error_48)
-                    .timeout(10_000)
-                    .into(ivImageAttachPost)
-            } else {
-                frameAttachView.visibility = View.GONE
-            }
+         //   if (post.attachment != null && post.attachment?.type == AttachmentType.IMAGE) {
+            //    frameAttachView.visibility = View.VISIBLE
+             //   ivImageAttachPost.contentDescription = post.attachment?.description
+           //     Glide.with(ivImageAttachPost)
+              //      .load("http://10.0.2.2:9999/images/${post.attachment?.url}")
+//                    .timeout(10_000)
+               //     .into(ivImageAttachPost)
+        //    } else {
+             //   frameAttachView.visibility = View.GONE
+       //     }
 
             binding.root.setOnClickListener {
                 onInteractionListener.onPostItemClick(post)

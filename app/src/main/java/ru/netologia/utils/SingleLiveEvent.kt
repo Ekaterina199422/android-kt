@@ -11,13 +11,13 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
 
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<in T?>) {
-        require(!hasActiveObservers()) {
+        if(!hasActiveObservers()) {
             error("Multiple observers registered but only one will be notified of changes.")
         }
 
-        super.observe(owner, Observer {
+        super.observe(owner, Observer<T> { t ->
             if (pending.compareAndSet(true, false)) {
-                observer.onChanged(it)
+                observer.onChanged(t)
             }
         })
     }

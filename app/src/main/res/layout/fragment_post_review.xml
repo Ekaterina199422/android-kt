@@ -86,6 +86,7 @@
                 android:layout_marginTop="@dimen/common_spacing"
                 android:layout_marginBottom="@dimen/common_spacing"
                 android:autoLink="web"
+                android:gravity="top|start"
                 app:layout_constraintBottom_toTopOf="@id/frame_video_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
