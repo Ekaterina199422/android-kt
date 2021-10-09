@@ -1,6 +1,8 @@
 package ru.netologia.dto
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
 import ru.netologia.enumeration.PostState
 
 @Entity
@@ -17,7 +19,8 @@ data class PostEntity(
         val chat: Int = 0,
         val views: Int = 0,
         val likedByMe: Boolean = false,
-        val state: PostState = PostState.Success
+        val state: PostState = PostState.Success,
+        val visiblestate: Boolean = false
 ) {
 
 
@@ -47,8 +50,8 @@ companion object {
             dto.share,
             dto.chat,
             dto.views,
-            dto.likedByMe,
-            dto.state
+            dto.likedByMe
+
 
 
     )
@@ -63,3 +66,4 @@ companion object {
     }
 
 }
+fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity.Companion::fromDto)

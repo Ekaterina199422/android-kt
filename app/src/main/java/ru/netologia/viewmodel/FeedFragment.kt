@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.netologia.EditPost.Companion.authorEdit
 import ru.netologia.EditPost.Companion.contentEdit
@@ -27,15 +28,14 @@ class  FeedFragment : Fragment() {
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         var removeId = 0L
         var checkPost = Post()
         val binding = FragmentFeedBinding.inflate(layoutInflater)
         val adapter = PostsAdapter(object : IOnInteractionListener {
-
 
 
             override fun onLike(post: Post) {
@@ -91,26 +91,37 @@ class  FeedFragment : Fragment() {
                     .setAction("Retry") { viewModel.refreshingPosts() }
                     .show()
         }
-            viewModel.postRemoveError.observe(viewLifecycleOwner) {
-                Snackbar.make(
-                        binding.root,
-                        R.string.message_status_error,
-                        Snackbar.LENGTH_LONG
-                )
-                        .setAction("Retry") { viewModel.removePost(removeId) }
-                        .show()
-            }
+        viewModel.postRemoveError.observe(viewLifecycleOwner) {
+            Snackbar.make(
+                    binding.root,
+                    R.string.message_status_error,
+                    Snackbar.LENGTH_LONG
+            )
+                    .setAction("Retry") { viewModel.removePost(removeId) }
+                    .show()
+        }
 
-            viewModel.postLikeError.observe(viewLifecycleOwner) {
-                Snackbar.make(
-                        binding.root,
-                        R.string.message_status_error,
-                        Snackbar.LENGTH_SHORT
-                )
-                        .setAction("Retry") { viewModel.like(checkPost) }
-                        .show()
-            }
-
+        viewModel.postLikeError.observe(viewLifecycleOwner) {
+            Snackbar.make(
+                    binding.root,
+                    R.string.message_status_error,
+                    Snackbar.LENGTH_SHORT
+            )
+                    .setAction("Retry") { viewModel.like(checkPost) }
+                    .show()
+        }
+         binding.fabExtend.setOnClickListener {
+             viewModel.getNewPosts()
+        adapter.notifyDataSetChanged()
+        binding.rvPostList.layoutManager?.smoothScrollToPosition(
+                binding.rvPostList,
+                RecyclerView.State(),
+                0
+        )
+    }
+    viewModel.newPosts.observe(viewLifecycleOwner) {
+    viewModel.checkNewPosts(it)
+}
 
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_addNewPost)
@@ -122,6 +133,7 @@ class  FeedFragment : Fragment() {
             binding.tvTextStatusEmpty.isVisible = model.empty
             binding.tvTextStatusError.text = model.error.getCreateReadableMessageError(resources)
             binding.pbProgress.isVisible = model.loading
+            binding.fabExtend.isVisible = model.visibleFab
         }
         viewModel.posts.observe(viewLifecycleOwner, adapter::submitList)
         binding.errorButton.setOnClickListener {

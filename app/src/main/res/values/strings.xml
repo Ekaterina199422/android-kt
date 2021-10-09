@@ -30,4 +30,5 @@
     <string name="error_network">Network Error</string>
     <string name="error_unknown">Unknown Error</string>
     <string name="body_empty">Body is null</string>
+    <string name="title_new_message">Свежие записи</string>
 </resources>

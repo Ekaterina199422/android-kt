@@ -32,6 +32,8 @@ private val retrofit = Retrofit.Builder()
 interface PostApiService {
     @GET("posts")
     suspend fun getAll(): List<Post>
+    @GET("posts/{id}/newer")
+    suspend fun getNewer(@Path("id") id: Long):List<Post> // получение новывх постов
     @DELETE("posts/{id}/likes")
     suspend fun unLikeById(@Path("id") id: Long): Post
     @POST("posts/{id}/likes")

@@ -2,10 +2,9 @@ package ru.netologia.viewmodel
 
 import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ru.netologia.R
 import ru.netologia.db.AppDb
@@ -32,6 +31,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         published = ""
     )
     private var localId = 0L
+    private val list= listOf<Post>()
     private val repository: IPostRepository = PostRepositoryImpl (
                 AppDb.getInstance(application).postDao()
     )
@@ -41,7 +41,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     private val edited = MutableLiveData(empty)
     val posts: LiveData<List<Post>>
-        get() = repository.data
+        get() = repository.posts.asLiveData(Dispatchers.Default)
 
     private val _postsRefreshError = SingleLiveEvent<Unit>()
     val postsRefreshError: LiveData<Unit>
@@ -59,9 +59,33 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postLikeError: LiveData<Unit>
         get() = _postLikeError
 
+    val newPosts: LiveData<Int> = posts.switchMap {// switchMap позваляет нам подписаться на именения в наших постах
+        repository.getNewerCount(it.firstOrNull()?.id ?: 0L) // вызвыем функцию getNewerCount с репозитория и передаем id самого первого поста
+                .asLiveData(Dispatchers.Default) // возращеается новая LiveData
+    }
+
     init {
         loadPosts()
     }
+
+    fun checkNewPosts(count:Int){
+    if (count > 0) {
+        _state.value = FeedModel(visibleFab = true)
+    }
+}
+    fun getNewPosts(){
+        viewModelScope.launch {
+    try {
+        val newPosting= repository.getNewList(posts.value?.firstOrNull()?.id ?: 0L)
+        newPosting.collect { posts ->
+            repository.sendNewPost(posts)
+        }
+        _state.value = FeedModel(visibleFab = false)
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+}
+}
 
     fun like(post: Post) {
         if (post.likedByMe) {

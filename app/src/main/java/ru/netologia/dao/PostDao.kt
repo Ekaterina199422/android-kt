@@ -1,16 +1,20 @@
 package ru.netologia.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import ru.netologia.dto.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity")
-    fun getAll(): LiveData<List<PostEntity>>
+    @Query("SELECT * FROM PostEntity WHERE visiblestate = 1")
+    fun getAll(): Flow<List<PostEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(post: PostEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNewer(posts: List<PostEntity>)
+
 
     @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
     suspend fun updateContentById(id: Long, content: String)
@@ -32,8 +36,8 @@ interface PostDao {
     )
     fun share(id: Long)
 
-    @Query("SELECT COUNT (*) FROM PostEntity")
-    suspend fun count(): Long
+    @Query("SELECT COUNT (*) FROM PostEntity WHERE visibleState = 0")
+    suspend fun count(): Int
 
     @Query("SELECT EXISTS(SELECT * FROM PostEntity WHERE id = :id)")
     fun isRowIsExist(id: Long): Boolean
@@ -44,7 +48,7 @@ interface PostDao {
             if (isRowIsExist(it.id)) {
                 updateContentById(it.id, it.content)
             } else {
-                insert(it)
+                insert(it.copy(visiblestate = true))
             }
         }
     }
