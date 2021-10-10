@@ -31,7 +31,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         authorAvatar = "",
         published = ""
     )
-    private var localId = 0L
+   
     private val repository: IPostRepository = PostRepositoryImpl (
                 AppDb.getInstance(application).postDao()
     )
@@ -125,6 +125,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun savePost() {
+        var localId = 0L
         viewModelScope.launch {
             edited.value?.let {
             try {
