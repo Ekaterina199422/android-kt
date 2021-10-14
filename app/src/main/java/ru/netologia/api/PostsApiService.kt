@@ -1,5 +1,6 @@
 package ru.netologia.api
 
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -7,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import retrofit2.http.*
 import ru.netologia.BuildConfig
+import ru.netologia.dto.Media
 import ru.netologia.dto.Post
 import java.util.concurrent.TimeUnit
 
@@ -42,6 +44,9 @@ interface PostApiService {
     suspend fun removePost(@Path("id") id: Long): Unit
     @POST("posts")
     suspend fun savePost(@Body post: Post): Post
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Part media: MultipartBody.Part): Media
 }
 object PostsApi {
     val Service: PostApiService by lazy(retrofit::create)

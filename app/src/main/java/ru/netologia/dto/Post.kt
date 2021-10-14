@@ -13,5 +13,6 @@ data class Post(
         val chat: Int = 0,
         val views: Int = 0,
         val likedByMe: Boolean = false,
-        val state: PostState = PostState.Success
-        )
+        val state: PostState = PostState.Success,
+        val attachment: Attachment? = null
+)

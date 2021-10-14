@@ -31,4 +31,9 @@
     <string name="error_unknown">Неизвестная ошибка</string>
     <string name="body_empty">Пусто</string>
     <string name="title_new_message">Свежие записи</string>
+    <string name="description_select_photo">Выбрать фото</string>
+    <string name="description_take_photo">Сделать фото</string>
+    <string name="description_photo">Фото</string>
+    <string name="remove">Удалить</string>
+    <string name="menu_save">Сохранить</string>
 </resources>

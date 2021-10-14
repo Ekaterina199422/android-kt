@@ -2,6 +2,7 @@ package ru.netologia.adapter
 
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.isVisible
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide
 import ru.netologia.R
 import ru.netologia.databinding.PostCardBinding
 import ru.netologia.dto.Post
+import ru.netologia.enumeration.AttachmentType
 import ru.netologia.enumeration.PostState
 
 
@@ -58,19 +60,23 @@ class PostViewHolder(
             pbProgress.isVisible = post.state == PostState.Progress
             ivStatus.isVisible = post.state == PostState.Success
 
-         //   if (post.attachment != null && post.attachment?.type == AttachmentType.IMAGE) {
-            //    frameAttachView.visibility = View.VISIBLE
-             //   ivImageAttachPost.contentDescription = post.attachment?.description
-           //     Glide.with(ivImageAttachPost)
-              //      .load("http://10.0.2.2:9999/images/${post.attachment?.url}")
-//                    .timeout(10_000)
-               //     .into(ivImageAttachPost)
-        //    } else {
-             //   frameAttachView.visibility = View.GONE
-       //     }
+          if (post.attachment != null && post.attachment.type == AttachmentType.IMAGE) {
+                frameAttachView.visibility = View.VISIBLE
+                Glide.with(ivImageAttachPost)
+                   .load("http://10.0.2.2:9999/images/${post.attachment.url}")
+                    .placeholder(R.drawable.ic_attach_error_48)
+                    .timeout(10_000)
+                    .into(ivImageAttachPost)
+            } else {
+                frameAttachView.visibility = View.GONE
+            }
 
             binding.root.setOnClickListener {
                 onInteractionListener.onPostItemClick(post)
+            }
+            binding.ivImageAttachPost.setOnClickListener {
+                    onInteractionListener.onClickImage(post)
+
             }
             btnErrorApiLoad.setOnClickListener {
                 onInteractionListener.onRetrySendPost(post)
@@ -101,13 +107,6 @@ class PostViewHolder(
             }
             share.setOnClickListener {
                 onInteractionListener.onShare(post)
-            }
-
-            binding.frameAttachView.setOnClickListener {
-                onInteractionListener.playVideoPost(post)
-            }
-            binding.buttonPlay.setOnClickListener {
-                onInteractionListener.playVideoPost(post)
             }
 
         }

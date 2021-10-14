@@ -7,73 +7,88 @@
     android:padding="@dimen/common_spacing"
     tools:context=".AddNewPost">
 
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/common_spacing"
-        android:contentDescription="@string/description_post_author_avatar"
-        app:layout_constraintBottom_toBottomOf="@id/barrierTop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/posts_avatars_drawable" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrierTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="add_new_post_text,avatar" />
-
-    <TextView
-        android:id="@+id/add_new_post_text"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_spacing"
-        android:layout_marginEnd="@dimen/common_spacing"
-        android:ellipsize="end"
-        android:singleLine="true"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/divider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/avatar"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:hint= "@string/text_add_new_post" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <EditText
         android:id="@+id/new_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/common_spacing"
-        android:layout_marginBottom="@dimen/common_spacing"
+        android:background="@android:color/transparent"
         android:inputType="textMultiLine"
-        android:background="@android:color/transparent"
-        android:hint="@string/edit_post_text"
-        android:importantForAutofill="no"
+        android:padding="@dimen/common_spacing" />
+
+    <FrameLayout
+        android:id="@+id/photoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/description_photo" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/removePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:text="@string/remove" />
+
+    </FrameLayout>
+    </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/common_spacing"
+        android:layout_marginEnd="@dimen/common_spacing"
+        android:background="@color/icon_button_tint"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/barrierMid"
-        app:layout_constraintTop_toBottomOf="@id/barrierTop"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrierMid"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="btn_save_new_post" />
-
-
-    <ImageButton
-        android:id="@+id/btn_save_new_post"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/ic_add_post_48"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:padding="@dimen/common_spacing"
-        android:contentDescription="@string/btn_save_post"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/pickPhoto"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_select_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_photo_24dp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/takePhoto"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/description_take_photo"
+            android:padding="@dimen/common_spacing"
+            app:icon="@drawable/ic_camera_24dp" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

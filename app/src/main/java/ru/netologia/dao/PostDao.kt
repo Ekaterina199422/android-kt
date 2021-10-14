@@ -6,7 +6,7 @@ import ru.netologia.dto.PostEntity
 
 @Dao
 interface PostDao {
-    @Query("SELECT * FROM PostEntity WHERE visiblestate = 1")
+    @Query("SELECT * FROM PostEntity")
     fun getAll(): Flow<List<PostEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -36,9 +36,6 @@ interface PostDao {
     )
     fun share(id: Long)
 
-    @Query("SELECT COUNT (*) FROM PostEntity WHERE visibleState = 0")
-    suspend fun count(): Int
-
     @Query("SELECT EXISTS(SELECT * FROM PostEntity WHERE id = :id)")
     fun isRowIsExist(id: Long): Boolean
 
@@ -48,7 +45,7 @@ interface PostDao {
             if (isRowIsExist(it.id)) {
                 updateContentById(it.id, it.content)
             } else {
-                insert(it.copy(visiblestate = true))
+                insert(it)
             }
         }
     }

@@ -7,4 +7,5 @@
     <color name="edit_message_text">#039BE5</color>
     <color name="like_true">#CC0E0E</color>
     <color name="colorBackground"> #90000000</color>
+    <color name="icon_button_tint.xml">#ccc</color>
 </resources>

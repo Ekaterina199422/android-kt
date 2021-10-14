@@ -2,6 +2,8 @@ package ru.netologia.repository
 
 
 import kotlinx.coroutines.flow.Flow
+import ru.netologia.dto.Media
+import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Post
 import ru.netologia.dto.PostEntity
 
@@ -17,6 +19,7 @@ interface IPostRepository {
     suspend fun sendPost(post: Post): Post
     fun getNewerCount(id: Long): Flow<Int>
     fun getNewList(id: Long) : Flow<List<Post>>
-    suspend fun count() : Int
     suspend fun sendNewPost(posts: List<Post>)
+    suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
+    suspend fun upload(upload: MediaUpload): Media
     }

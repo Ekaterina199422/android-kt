@@ -2,10 +2,12 @@ package ru.netologia.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netologia.api.PostsApi
 import ru.netologia.dao.PostDao
-import ru.netologia.dto.Post
-import ru.netologia.dto.PostEntity
+import ru.netologia.dto.*
+import ru.netologia.enumeration.AttachmentType
 
 
 class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
@@ -24,11 +26,10 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
                 .flowOn(Dispatchers.Default) // Действия будут происходи в Default потоке
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
-        while (true){
         val new = PostsApi.Service.getNewer(id)
         emit(new.size) // тот кто подписался на данные оновления будет получать количестов постов
 
-    }
+
 }
 
             .catch { e -> e.printStackTrace() }
@@ -65,10 +66,25 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
     override suspend fun sendNewPost(posts: List<Post>) =
             dao.insert(posts.map(PostEntity.Companion::fromDto))
 
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
+        val media = upload(upload)
+        val postWithAttachment =
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+        savePost(PostEntity.fromDto(postWithAttachment))
+        sendPost(postWithAttachment)
+    }
     override suspend fun savePost(post: PostEntity): Long = dao.insert(post)
 
 
     override suspend fun sendPost(post: Post): Post = PostsApi.Service.savePost(post)
 
-    override suspend fun count(): Int = dao.count()
+    override suspend fun upload(upload: MediaUpload): Media {
+        val media = MultipartBody.Part.createFormData(
+                "file",
+                upload.file.name,
+                upload.file.asRequestBody()
+        )
+        return PostsApi.Service.upload(media)
+    }
+
 }
