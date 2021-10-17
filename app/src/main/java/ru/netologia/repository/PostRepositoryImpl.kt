@@ -4,6 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import ru.netologia.Auth.AuthState
 import ru.netologia.api.PostsApi
 import ru.netologia.dao.PostDao
 import ru.netologia.dto.*
@@ -75,7 +76,9 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
     }
     override suspend fun savePost(post: PostEntity): Long = dao.insert(post)
 
-
+    override suspend fun updateUser(login: String, pass: String): AuthState {
+        return PostsApi.Service.updateUser(login, pass)
+    }
     override suspend fun sendPost(post: Post): Post = PostsApi.Service.savePost(post)
 
     override suspend fun upload(upload: MediaUpload): Media {

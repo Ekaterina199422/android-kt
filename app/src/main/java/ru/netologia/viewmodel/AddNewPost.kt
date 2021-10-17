@@ -128,3 +128,6 @@ class AddNewPost : Fragment() {
         }
 
     }
+
+
+

@@ -5,21 +5,24 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netologia.R
-import ru.netologia.db.AppDb
+import ru.netologia.application.NMediaApplication
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Photo
 import ru.netologia.dto.Post
 import ru.netologia.dto.PostEntity
 import ru.netologia.enumeration.PostState
 import ru.netologia.model.FeedModel
-import ru.netologia.repository.IPostRepository
-import ru.netologia.repository.PostRepositoryImpl
 import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.File
 import java.io.IOException
+
+
 
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -27,16 +30,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     var isHandledBackPressed: String = ""
 
     private val empty = Post(
-            id = 0,
             content = "",
             author = "Me",
             authorAvatar = "",
             published = ""
     )
     private val noPhoto = Photo()
-    private val repository: IPostRepository = PostRepositoryImpl(
-            AppDb.getInstance(application).postDao()
-    )
+    private val repository = NMediaApplication.repository
     private val _state = MutableLiveData(FeedModel())
     val state: LiveData<FeedModel>
         get() = _state
@@ -46,8 +46,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    val posts: LiveData<List<Post>>
-        get() = repository.posts.asLiveData(Dispatchers.Default)
+    @ExperimentalCoroutinesApi
+    val posts:LiveData<List<Post>>
+        get() = NMediaApplication.appAuth
+            .authStateFlow
+            .flatMapLatest { (myId, _) ->
+                repository.posts
+                    .map { posts ->
+                        posts.map { it.copy(ownedByMe = it.authorId == myId) }
+                    }
+            }.asLiveData(Dispatchers.Default)
 
     private val _postsRefreshError = SingleLiveEvent<Unit>()
     val postsRefreshError: LiveData<Unit>
@@ -61,6 +69,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postLikeError: LiveData<Unit>
         get() = _postLikeError
 
+    @ExperimentalCoroutinesApi
     val newPosts = posts.switchMap {// switchMap позваляет нам подписаться на именения в наших постах
         repository.getNewerCount(it.firstOrNull()?.id ?: 0L) // вызвыем функцию getNewerCount с репозитория и передаем id самого первого поста
                 .asLiveData() // возращеается новая LiveData

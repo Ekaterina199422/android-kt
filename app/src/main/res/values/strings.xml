@@ -36,4 +36,13 @@
     <string name="description_select_photo">Select photo</string>
     <string name="description_take_photo">Take photo</string>
     <string name="menu_save">Save</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="google_play_unavailable">Google Api Unavailable</string>
+    <string name="title_login">Login:</string>
+    <string name="title_password">Password</string>
+    <string name="btn_sign_in">Sign in</string>
+    <string name="error_login">Login can\'t be empty</string>
+    <string name="error_pass">Pass can\'t be empty</string>
 </resources>

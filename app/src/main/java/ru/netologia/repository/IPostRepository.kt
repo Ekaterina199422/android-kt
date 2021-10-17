@@ -2,6 +2,7 @@ package ru.netologia.repository
 
 
 import kotlinx.coroutines.flow.Flow
+import ru.netologia.Auth.AuthState
 import ru.netologia.dto.Media
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Post
@@ -22,4 +23,5 @@ interface IPostRepository {
     suspend fun sendNewPost(posts: List<Post>)
     suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
+    suspend fun updateUser(login: String, pass: String): AuthState
     }

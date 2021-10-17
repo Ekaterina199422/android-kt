@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/own">
     <item
         android:id="@+id/postRemove"
         android:title="@string/post_remove_menu" />
@@ -8,5 +9,5 @@
         android:title="@string/btn_post_edit" />
 
 
-
+    </group>
 </menu>

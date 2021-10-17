@@ -7,6 +7,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import retrofit2.http.*
+import ru.netologia.Auth.AppAuth
+import ru.netologia.Auth.AuthState
 import ru.netologia.BuildConfig
 import ru.netologia.dto.Media
 import ru.netologia.dto.Post
@@ -19,6 +21,18 @@ private val logging = HttpLoggingInterceptor()
                 level = HttpLoggingInterceptor.Level.BODY
             }
         }
+private val okhttp = OkHttpClient.Builder()
+    .addInterceptor(logging)
+    .addInterceptor { chain ->
+        AppAuth.getInstance().authStateFlow.value.token?.let {token ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", token)
+                .build()
+            return@addInterceptor chain.proceed(newRequest)
+        }
+        chain.proceed(chain.request())
+    }
+    .build()
 
 private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -47,6 +61,10 @@ interface PostApiService {
     @Multipart
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Media
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): AuthState
+
 }
 object PostsApi {
     val Service: PostApiService by lazy(retrofit::create)

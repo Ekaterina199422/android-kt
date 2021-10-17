@@ -36,4 +36,14 @@
     <string name="description_photo">Фото</string>
     <string name="remove">Удалить</string>
     <string name="menu_save">Сохранить</string>
+    <string name="sign_in">Вход</string>
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_out">Выход</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="title_login">Login:</string>
+    <string name="title_password">Password</string>
+    <string name="btn_sign_in">Sign in</string>
+    <string name="error_login">Login не может быть пустым</string>
+    <string name="error_pass">Pass не может быть пустым</string>
+
 </resources>

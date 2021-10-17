@@ -11,6 +11,7 @@ import ru.netologia.enumeration.PostState
 data class PostEntity(
         @PrimaryKey(autoGenerate = true)
         val localId: Long,
+        val authorId: Long,
         val id: Long,
         val author: String,
         val authorAvatar: String,
@@ -31,6 +32,7 @@ fun toDto() =
     Post(
         id,
         author,
+        authorId,
         authorAvatar,
         content,
         published,
@@ -46,6 +48,7 @@ companion object {
     fun fromDto(dto: Post) = PostEntity(
             0,
             dto.id,
+            dto.authorId,
             dto.author,
             dto.authorAvatar,
             dto.content,
