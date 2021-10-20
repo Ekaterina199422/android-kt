@@ -3,6 +3,7 @@ package ru.netologia.api
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -12,6 +13,7 @@ import ru.netologia.Auth.AuthState
 import ru.netologia.BuildConfig
 import ru.netologia.dto.Media
 import ru.netologia.dto.Post
+import ru.netologia.dto.PushToken
 import java.util.concurrent.TimeUnit
 
 
@@ -45,7 +47,9 @@ private val retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()
-interface PostApiService {
+interface ApiService {
+    @POST("users/push-tokens")
+    suspend fun save(@Body pushToken: PushToken): Response<Unit>//запрос на оправку токена
     @GET("posts")
     suspend fun getAll(): List<Post>
     @GET("posts/{id}/newer")
@@ -66,6 +70,6 @@ interface PostApiService {
     suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): AuthState
 
 }
-object PostsApi {
-    val Service: PostApiService by lazy(retrofit::create)
+object Api {
+    val Service: ApiService by lazy(retrofit::create)
 }

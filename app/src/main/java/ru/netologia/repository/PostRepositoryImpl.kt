@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netologia.Auth.AuthState
-import ru.netologia.api.PostsApi
+import ru.netologia.api.Api
 import ru.netologia.dao.PostDao
 import ru.netologia.dto.*
 import ru.netologia.enumeration.AttachmentType
@@ -27,7 +27,7 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
                 .flowOn(Dispatchers.Default) // Действия будут происходи в Default потоке
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
-        val new = PostsApi.Service.getNewer(id)
+        val new = Api.Service.getNewer(id)
         emit(new.size) // тот кто подписался на данные оновления будет получать количестов постов
 
 
@@ -37,7 +37,7 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
             .flowOn(Dispatchers.Default)
 
     override fun getNewList(id: Long): Flow<List<Post>> = flow {
-            val posts = PostsApi.Service.getNewer(id)
+            val posts = Api.Service.getNewer(id)
             emit(posts)
 
     }
@@ -45,23 +45,23 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
             .flowOn(Dispatchers.Default)
 
     override suspend fun getAll(): List<Post> {
-        val netPosts = PostsApi.Service.getAll()
+        val netPosts = Api.Service.getAll()
         dao.insert(netPosts.map(PostEntity.Companion::fromDto))
         return netPosts
 }
 
         override suspend fun unLikeById(id: Long){
-            PostsApi.Service.unLikeById(id)
+            Api.Service.unLikeById(id)
             dao.likeById(id)
 
         }
 
     override suspend fun likeById(id: Long) {
-        PostsApi.Service.likeById(id)
+        Api.Service.likeById(id)
         dao.likeById(id)
     }
         override suspend fun removePost(id: Long) {
-            PostsApi.Service.removePost(id)
+            Api.Service.removePost(id)
             dao.removeById(id)
     }
     override suspend fun sendNewPost(posts: List<Post>) =
@@ -77,9 +77,9 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
     override suspend fun savePost(post: PostEntity): Long = dao.insert(post)
 
     override suspend fun updateUser(login: String, pass: String): AuthState {
-        return PostsApi.Service.updateUser(login, pass)
+        return Api.Service.updateUser(login, pass)
     }
-    override suspend fun sendPost(post: Post): Post = PostsApi.Service.savePost(post)
+    override suspend fun sendPost(post: Post): Post = Api.Service.savePost(post)
 
     override suspend fun upload(upload: MediaUpload): Media {
         val media = MultipartBody.Part.createFormData(
@@ -87,7 +87,7 @@ class PostRepositoryImpl(private val dao: PostDao) : IPostRepository {
                 upload.file.name,
                 upload.file.asRequestBody()
         )
-        return PostsApi.Service.upload(media)
+        return Api.Service.upload(media)
     }
 
 }

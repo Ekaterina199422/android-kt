@@ -45,4 +45,5 @@
     <string name="btn_sign_in">Sign in</string>
     <string name="error_login">Login can\'t be empty</string>
     <string name="error_pass">Pass can\'t be empty</string>
+    \
 </resources>

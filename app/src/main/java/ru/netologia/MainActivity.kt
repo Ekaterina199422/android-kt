@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import ru.netologia.AddNewPost.Companion.textArg
 import ru.netologia.Auth.AppAuth
@@ -45,8 +46,26 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         viewModel.data.observe(this) {
             invalidateOptionsMenu() // при изменении data меняем menu
 
-    }
-        checkGoogleApiAvailability()
+         }
+        FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                println("some stuff happened: ${task.exception}")
+                return@addOnCompleteListener
+            }
+                val token = task.result
+                println(token)
+            }
+
+            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    println("some stuff happened: ${task.exception}")
+                    return@addOnCompleteListener
+                }
+
+                val token = task.result
+                println(token)
+            }
+            checkGoogleApiAvailability()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -85,15 +104,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 return@with
             }
             if (isUserResolvableError(code)) {
-                getErrorDialog(this@MainActivity, code, 9000)?.show()
+                getErrorDialog(this@MainActivity, code, 9000).show()
                 return
             }
             Toast.makeText(this@MainActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
                 .show()
-        }
-
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            println(it)
         }
     }
 }
