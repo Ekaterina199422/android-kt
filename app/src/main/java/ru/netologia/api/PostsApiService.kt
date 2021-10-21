@@ -21,10 +21,13 @@ private val logging = HttpLoggingInterceptor()
                 level = HttpLoggingInterceptor.Level.BODY
             }
         }
-private val okhttp = OkHttpClient.Builder()
-    .addInterceptor(logging)
-    .addInterceptor { chain ->
-        AppAuth.getInstance().authStateFlow.value.token?.let {token ->
+
+private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(PostsInterceptor())
+        .addInterceptor(logging)
+        .addInterceptor { chain ->
+        NMediaApplication.appAuth.authStateFlow.value.token?.let {token ->
             val newRequest = chain.request().newBuilder()
                 .addHeader("Authorization", token)
                 .build()
@@ -32,12 +35,6 @@ private val okhttp = OkHttpClient.Builder()
         }
         chain.proceed(chain.request())
     }
-    .build()
-
-private val client = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .addInterceptor(PostsInterceptor())
-        .addInterceptor(logging)
         .build()
 
 private val retrofit = Retrofit.Builder()
