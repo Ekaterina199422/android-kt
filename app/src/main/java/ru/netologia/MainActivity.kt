@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             invalidateOptionsMenu() // при изменении data меняем menu
 
     }
-        checkGoogleApiAvailability()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -78,22 +77,4 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-    private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
-            val code = isGooglePlayServicesAvailable(this@MainActivity)
-            if (code == ConnectionResult.SUCCESS) {
-                return@with
-            }
-            if (isUserResolvableError(code)) {
-                getErrorDialog(this@MainActivity, code, 9000)?.show()
-                return
-            }
-            Toast.makeText(this@MainActivity, R.string.google_play_unavailable, Toast.LENGTH_LONG)
-                .show()
-        }
-
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            println(it)
-        }
-    }
 }
