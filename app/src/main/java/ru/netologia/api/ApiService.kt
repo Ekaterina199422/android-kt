@@ -23,25 +23,22 @@ private val logging = HttpLoggingInterceptor()
                 level = HttpLoggingInterceptor.Level.BODY
             }
         }
-private val okhttp = OkHttpClient.Builder()
-    .addInterceptor(logging)
-    .addInterceptor { chain ->
-        AppAuth.getInstance().authStateFlow.value.token?.let {token ->
-            val newRequest = chain.request().newBuilder()
+private val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(PostsInterceptor())
+        .addInterceptor(logging)
+        .addInterceptor { chain ->
+         NMediaApplication.appAuth.authStateFlow.value.token?.let {token ->
+                 val newRequest = chain.request().newBuilder()
                 .addHeader("Authorization", token)
                 .build()
             return@addInterceptor chain.proceed(newRequest)
         }
         chain.proceed(chain.request())
     }
-    .build()
-
-private val client = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .addInterceptor(PostsInterceptor())
-        .addInterceptor(logging)
-        .build()
-
+        
+   .build()
+   
 private val retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
