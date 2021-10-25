@@ -94,7 +94,7 @@ class AddNewPost : Fragment() {
             findNavController().navigateUp()
         }
         binding.removePhoto.setOnClickListener {
-            viewModel.changePhoto(null, null)
+            viewModel.changePhoto(null)
         }
         viewModel.photo.observe(viewLifecycleOwner) {
             if (it.uri == null) {
@@ -122,7 +122,7 @@ class AddNewPost : Fragment() {
             ) {
                 val url = data?.data
                 val file = ImagePicker.getFile(data)
-                viewModel.changePhoto(url, file)
+                viewModel.changePhoto(url)
             }
 
         }

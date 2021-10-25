@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import ru.netologia.entity.PostWorkEntity
 import ru.netologia.enumeration.AttachmentType
 import ru.netologia.enumeration.PostState
 
@@ -31,8 +32,8 @@ data class PostEntity(
 fun toDto() =
     Post(
         id,
-        author,
         authorId,
+        author,
         authorAvatar,
         content,
         published,
@@ -60,6 +61,23 @@ companion object {
             dto.likedByMe,
             dto.state,
             AttachmentEmbeddable.fromDto(dto.attachment))
+    fun fromWorkDto(dto: PostWorkEntity) = PostEntity(
+        0,
+        dto.id,
+        dto.authorId,
+        dto.author,
+        dto.authorAvatar,
+        dto.content,
+        dto.published,
+        dto.likes,
+        dto.share,
+        dto.chat,
+        dto.views,
+        dto.likedByMe,
+        dto.state,
+        dto.attachment
+    )
+
 
 }
 

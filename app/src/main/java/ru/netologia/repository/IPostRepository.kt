@@ -24,4 +24,7 @@ interface IPostRepository {
     suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
     suspend fun updateUser(login: String, pass: String): AuthState
+    suspend fun saveWork(post: Post, upload: MediaUpload): Long
+    suspend fun processWork(id: Long)
+    suspend fun prepareWork(post: Post): Long
     }

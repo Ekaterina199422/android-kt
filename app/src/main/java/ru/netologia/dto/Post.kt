@@ -4,8 +4,8 @@ import ru.netologia.enumeration.PostState
 
 data class Post(
         val id: Long = 0,
-        val author: String  = " ",
         val authorId: Long = 0,
+        val author: String  = " ",
         val authorAvatar: String = " ",
         val content: String = " ",
         val published: String = " ",
