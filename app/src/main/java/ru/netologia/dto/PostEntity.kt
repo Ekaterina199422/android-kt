@@ -61,6 +61,7 @@ companion object {
             dto.likedByMe,
             dto.state,
             AttachmentEmbeddable.fromDto(dto.attachment))
+
     fun fromWorkDto(dto: PostWorkEntity) = PostEntity(
         0,
         dto.id,
