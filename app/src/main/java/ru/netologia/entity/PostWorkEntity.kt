@@ -27,22 +27,6 @@ data class PostWorkEntity(
     var attachment: AttachmentEmbeddable?,
     var uri: String? = null
 ) {
-    fun toDto() =
-        Post(
-            id,
-            authorId,
-            author,
-            authorAvatar,
-            content,
-            published,
-            likes,
-            share,
-            chat,
-            views,
-            likedByMe,
-            state,
-            attachment?.toDto()
-        )
 
     companion object {
         fun fromDto(dto: Post) = PostWorkEntity(

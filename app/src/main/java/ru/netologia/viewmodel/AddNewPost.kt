@@ -127,6 +127,12 @@ class AddNewPost : Fragment() {
 
         }
 
+
+    override fun onDestroyView() {
+        fragmentBinding = null
+        super.onDestroyView()
+    }
+
     }
 
 
