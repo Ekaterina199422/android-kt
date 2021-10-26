@@ -21,6 +21,7 @@ import ru.netologia.viewmodel.PostViewModel
 class AddNewPost : Fragment() {
     private val photoRequestCode = 1
     private val cameraRequestCode = 2
+
     companion object {
         var Bundle.textArg: String? by StringArg
     }
@@ -105,7 +106,6 @@ class AddNewPost : Fragment() {
             binding.photo.setImageURI(it.uri)
 
         }
-
         return binding.root
     }
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -117,8 +117,8 @@ class AddNewPost : Fragment() {
                 return
             }
             if (resultCode == Activity.RESULT_OK &&
-                    requestCode == photoRequestCode ||
-                    requestCode == cameraRequestCode
+                requestCode == photoRequestCode ||
+                requestCode == cameraRequestCode
             ) {
                 val url = data?.data
                 val file = ImagePicker.getFile(data)

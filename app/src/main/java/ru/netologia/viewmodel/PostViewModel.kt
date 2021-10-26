@@ -17,7 +17,7 @@ import ru.netologia.application.NMediaApplication
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Photo
 import ru.netologia.dto.Post
-import ru.netologia.dto.PostEntity
+import ru.netologia.entity.PostEntity
 import ru.netologia.enumeration.PostState
 import ru.netologia.model.FeedModel
 import ru.netologia.work.RemovePostWorker
@@ -51,8 +51,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-
-
     private val workManager: WorkManager =
         WorkManager.getInstance(application)
 
@@ -74,6 +72,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postRemoveError = SingleLiveEvent<Unit>()
     val postRemoveError: LiveData<Unit>
         get() = _postRemoveError
+
     private val _postLikeError = SingleLiveEvent<Unit>()
     val postLikeError: LiveData<Unit>
         get() = _postLikeError
@@ -207,14 +206,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                        .setConstraints(constraints)
                        .build()
                    workManager.enqueue(request)
-
             } catch (e: IOException) {
-            repository.savePost(
+                   repository.savePost(
                     PostEntity.fromDto(post)
                             .copy(
-                                    state = PostState.Error,
-                                    localId = localId,
-                                    id = localId
+                                state = PostState.Error,
+                                localId = localId,
+                                id = localId
                             )
             )
 

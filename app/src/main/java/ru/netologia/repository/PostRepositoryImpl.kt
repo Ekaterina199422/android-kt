@@ -11,7 +11,11 @@ import ru.netologia.api.Api
 import ru.netologia.application.NMediaApplication
 import ru.netologia.dao.PostDao
 import ru.netologia.dao.PostWorkDao
-import ru.netologia.dto.*
+import ru.netologia.dto.Media
+import ru.netologia.dto.MediaUpload
+import ru.netologia.dto.Post
+import ru.netologia.entity.AttachmentEmbeddable
+import ru.netologia.entity.PostEntity
 import ru.netologia.entity.PostWorkEntity
 import ru.netologia.enumeration.AttachmentType
 import ru.netologia.enumeration.PostState
@@ -36,12 +40,12 @@ class PostRepositoryImpl(
             .flowOn(Dispatchers.Default) // Действия будут происходи в Default потоке
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
-        val new = Api.Service.getNewer(id)
-        emit(new.size) // тот кто подписался на данные оновления будет получать количестов постов
+        while (true) {
+            val new = Api.Service.getNewer(id)
+            emit(new.size) // тот кто подписался на данные оновления будет получать количестов постов
 
+        }
     }
-
-
         .catch { e -> e.printStackTrace() }
         .flowOn(Dispatchers.Default)
 
@@ -78,14 +82,6 @@ class PostRepositoryImpl(
     override suspend fun sendNewPost(posts: List<Post>) =
         dao.insert(posts.map(PostEntity.Companion::fromDto))
 
-    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
-        val media = upload(upload)
-        val postWithAttachment =
-            post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-        savePost(PostEntity.fromDto(postWithAttachment))
-        sendPost(postWithAttachment)
-
-    }
 
     override suspend fun upload(upload: MediaUpload): Media {
         val media = MultipartBody.Part.createFormData(

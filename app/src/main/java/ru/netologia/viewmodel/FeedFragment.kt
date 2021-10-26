@@ -28,7 +28,8 @@ import ru.netologia.viewmodel.PostViewModel
 
 
 class  FeedFragment : Fragment() {
-    private val viewModel: PostViewModel by this.viewModels(ownerProducer = ::requireParentFragment)
+    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -49,8 +50,8 @@ class  FeedFragment : Fragment() {
 
             override fun onShare(post: Post) {
                 viewModel.sharePost(post)
-                removeId = post.id
-                viewModel.sharePost(post)
+                checkPost = post
+
             }
 
             override fun onRemove(post: Post) {
@@ -140,6 +141,7 @@ class  FeedFragment : Fragment() {
             binding.groupStatus.isVisible = model.errorVisible
             binding.tvTextStatusEmpty.isVisible = model.empty
             binding.tvTextStatusError.text = model.error.getCreateReadableMessageError(resources)
+            binding.swipeRefreshLayout.isRefreshing = model.refreshing
             binding.pbProgress.isVisible = model.loading
             binding.fabExtend.isVisible = model.visibleFab
         }

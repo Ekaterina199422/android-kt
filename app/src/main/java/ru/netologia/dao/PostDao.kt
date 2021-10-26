@@ -2,7 +2,7 @@ package ru.netologia.dao
 
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
-import ru.netologia.dto.PostEntity
+import ru.netologia.entity.PostEntity
 
 @Dao
 interface PostDao {

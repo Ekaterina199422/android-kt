@@ -80,8 +80,10 @@ class PostViewHolder(
             }
             btnErrorApiLoad.setOnClickListener {
                 onInteractionListener.onRetrySendPost(post)
-                menuPost.visibility = if (post.ownedByMe) View.VISIBLE else View.GONE
+
             }
+            menuPost.visibility = if (post.ownedByMe) View.VISIBLE else View.GONE
+
             menuPost.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.option_menu_post)

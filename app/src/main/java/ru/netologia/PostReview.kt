@@ -38,8 +38,6 @@ class PostReview : Fragment() {
         binding.content.text = arguments?.content
         binding.author.text = arguments?.author
         binding.published.text = arguments?.published
-
-
         binding.menuPost.setOnClickListener {
             PopupMenu(it.context, it).apply {
                 inflate(R.menu.option_menu_post)

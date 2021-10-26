@@ -10,7 +10,7 @@ import ru.netologia.application.NMediaApplication
 class RefreshPostsWorker (
     applicationContext: Context,
     params: WorkerParameters
-    ) : CoroutineWorker(applicationContext, params) {
+) : CoroutineWorker(applicationContext, params) {
         companion object {
             const val name = "ru.netology.nmedia.work.RefreshPostsWorker"
         }

@@ -3,7 +3,6 @@ package ru.netologia.entity
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netologia.dto.AttachmentEmbeddable
 import ru.netologia.dto.Post
 import ru.netologia.enumeration.PostState
 

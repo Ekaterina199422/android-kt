@@ -1,16 +1,10 @@
 package ru.netologia.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import ru.netologia.dao.PostDao
 import ru.netologia.dao.PostWorkDao
-import ru.netologia.dto.Converters
-import ru.netologia.dto.PostEntity
-import ru.netologia.dto.PostStateConverter
-import ru.netologia.entity.PostWorkEntity
+import ru.netologia.entity.*
 
 @Database(entities = [PostEntity::class, PostWorkEntity::class], version = 1, exportSchema = false)
 @TypeConverters(value = [PostStateConverter::class, Converters::class])

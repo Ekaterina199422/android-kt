@@ -8,7 +8,7 @@ import ru.netologia.application.NMediaApplication
 class SavePostWorker (
     applicationContext: Context,
     params: WorkerParameters
-    ) : CoroutineWorker(applicationContext, params) {
+) : CoroutineWorker(applicationContext, params) {
 
         companion object {
             const val postKey = "post"
