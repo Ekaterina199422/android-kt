@@ -12,6 +12,7 @@ import ru.netologia.BuildConfig
 import ru.netologia.application.NMediaApplication
 import ru.netologia.dto.Media
 import ru.netologia.dto.Post
+import ru.netologia.dto.PushToken
 import java.util.concurrent.TimeUnit
 
 
@@ -43,6 +44,9 @@ private val retrofit = Retrofit.Builder()
         .client(client)
         .build()
 interface ApiService {
+
+    @POST("users/push-tokens")
+    suspend fun push(@Body pushToken: PushToken): Unit
 
     @GET("posts")
     suspend fun getAll(): List<Post>

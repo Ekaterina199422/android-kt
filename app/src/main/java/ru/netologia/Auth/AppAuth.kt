@@ -1,9 +1,17 @@
 package ru.netologia.Auth
 
 import android.content.Context
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import ru.netologia.api.Api
+import ru.netologia.dto.PushToken
 
 class AppAuth private constructor(context: Context) {
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
@@ -25,7 +33,18 @@ class AppAuth private constructor(context: Context) {
         } else {
             _authStateFlow = MutableStateFlow(AuthState(id, token))
         }
+        sendPushToken()// оправка токена
+    }
 
+    fun sendPushToken(token: String? = null) {
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val pushToken = PushToken(token ?: Firebase.messaging.token.await())
+                Api.Service.push(pushToken)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     val authStateFlow: StateFlow<AuthState> = _authStateFlow.asStateFlow()
@@ -38,7 +57,7 @@ class AppAuth private constructor(context: Context) {
             putString(tokenKey, token)
             apply()
         }
-
+        sendPushToken()
     }
 
     @Synchronized
@@ -48,7 +67,7 @@ class AppAuth private constructor(context: Context) {
             clear()
             commit()
         }
-
+        sendPushToken()
     }
 
 
