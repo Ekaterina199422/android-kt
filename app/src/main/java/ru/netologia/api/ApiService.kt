@@ -3,7 +3,6 @@ package ru.netologia.api
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
@@ -13,7 +12,6 @@ import ru.netologia.BuildConfig
 import ru.netologia.application.NMediaApplication
 import ru.netologia.dto.Media
 import ru.netologia.dto.Post
-import ru.netologia.dto.PushToken
 import java.util.concurrent.TimeUnit
 
 
@@ -45,8 +43,6 @@ private val retrofit = Retrofit.Builder()
         .client(client)
         .build()
 interface ApiService {
-    @POST("users/push-tokens")
-    suspend fun save(@Body pushToken: PushToken): Response<Unit>//запрос на оправку токена
 
     @GET("posts")
     suspend fun getAll(): List<Post>
