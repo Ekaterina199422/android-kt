@@ -11,6 +11,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netologia.EditPost.Companion.authorEdit
 import ru.netologia.EditPost.Companion.contentEdit
@@ -27,7 +28,8 @@ import ru.netologia.dto.Post
 import ru.netologia.model.getCreateReadableMessageError
 import ru.netologia.viewmodel.PostViewModel
 
-
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class  FeedFragment : Fragment() {
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 

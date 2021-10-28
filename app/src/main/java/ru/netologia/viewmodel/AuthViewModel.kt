@@ -3,14 +3,16 @@ package ru.netologia.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import ru.netologia.Auth.AuthState
-import ru.netologia.application.NMediaApplication
+import ru.netologia.auth.AppAuth
+import ru.netologia.auth.AuthState
+import javax.inject.Inject
 
-class AuthViewModel : ViewModel(){
-    val data: LiveData<AuthState> = NMediaApplication.appAuth // подписываемся на AppAuth
-        .authStateFlow
+@HiltViewModel
+class AuthViewModel @Inject constructor(private val auth: AppAuth) : ViewModel(){
+    val data: LiveData<AuthState> = auth.authStateFlow // подписываемся на AppAuth
         .asLiveData(Dispatchers.Default)
     val authenticated: Boolean
-        get() = NMediaApplication.appAuth.authStateFlow.value.id != 0L // проверка id
+        get() = auth.authStateFlow.value.id != 0L // проверка id
 }

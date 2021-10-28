@@ -2,7 +2,7 @@ package ru.netologia.repository
 
 
 import kotlinx.coroutines.flow.Flow
-import ru.netologia.Auth.AuthState
+import ru.netologia.auth.AuthState
 import ru.netologia.dto.Media
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Post

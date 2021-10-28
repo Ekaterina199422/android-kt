@@ -13,13 +13,33 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netologia.AddNewPost.Companion.textArg
-import ru.netologia.Auth.AppAuth
-import ru.netologia.application.NMediaApplication
+import ru.netologia.auth.AppAuth
+import ru.netologia.repository.IPostRepository
 import ru.netologia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
-
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
+    @Inject
+    lateinit var repository: IPostRepository
+
+    @Inject
+    lateinit var auth: AppAuth
+
+    @Inject
+    lateinit var firebaseInstallations: FirebaseInstallations
+
+    @Inject
+    lateinit var firebaseMessaging: FirebaseMessaging
+
+    @Inject
+    lateinit var googleApiAvailability: GoogleApiAvailability
+
     private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +67,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             invalidateOptionsMenu() // при изменении data меняем menu
 
          }
-        FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+        firebaseInstallations.id.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 println("some stuff happened: ${task.exception}")
                 return@addOnCompleteListener
@@ -56,7 +76,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 println(token)
             }
 
-            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            firebaseMessaging.token.addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     println("some stuff happened: ${task.exception}")
                     return@addOnCompleteListener
@@ -86,11 +106,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 true
             }
             R.id.signup -> {
-                AppAuth.getInstance().setAuth(5, "x-token")
+               auth.setAuth(5, "x-token")
                 true
             }
             R.id.signout -> {
-                NMediaApplication.appAuth.removeAuth()
+               auth.removeAuth()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -98,7 +118,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
+        with(googleApiAvailability) {
             val code = isGooglePlayServicesAvailable(this@MainActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with

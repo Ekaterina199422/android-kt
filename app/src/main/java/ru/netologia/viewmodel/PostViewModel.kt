@@ -1,11 +1,13 @@
 package ru.netologia.viewmodel
 
-import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.lifecycle.*
 import androidx.work.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -13,13 +15,14 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netologia.R
-import ru.netologia.application.NMediaApplication
+import ru.netologia.auth.AppAuth
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Photo
 import ru.netologia.dto.Post
 import ru.netologia.entity.PostEntity
 import ru.netologia.enumeration.PostState
 import ru.netologia.model.FeedModel
+import ru.netologia.repository.IPostRepository
 import ru.netologia.work.RemovePostWorker
 import ru.netologia.work.SavePostWorker
 import ru.netology.nmedia.utils.SingleLiveEvent
@@ -27,21 +30,37 @@ import java.io.IOException
 
 
 
-@ExperimentalCoroutinesApi
-class PostViewModel(application: Application) : AndroidViewModel(application) {
+private val empty = Post(
+    id = 0,
+    content = "",
+    authorId = 0,
+    author = "",
+    authorAvatar = "",
+    published = ""
+)
 
+private val noPhoto = Photo()
+
+@ExperimentalCoroutinesApi
+@HiltViewModel
+class PostViewModel (
+    private val repository:IPostRepository,
+    private val workManager: WorkManager,
+    private val auth: AppAuth,
+    @ApplicationContext private val context: Context
+    ) : ViewModel() {
+    val posts:LiveData<List<Post>>
+    get() = auth
+.authStateFlow
+.flatMapLatest { (myId, _) ->
+    repository.posts
+        .map { posts ->
+            posts.map { it.copy(ownedByMe = it.authorId == myId) }
+        }
+}.asLiveData(Dispatchers.Default)
     var isHandledBackPressed: String = ""
 
-    private val empty = Post(
-            id = 0,
-            content = "",
-            authorId = 0,
-            author = "",
-            authorAvatar = "",
-            published = ""
-    )
-    private val noPhoto = Photo()
-    private val repository = NMediaApplication.repository
+
     private val _state = MutableLiveData(FeedModel())
     val state: LiveData<FeedModel>
         get() = _state
@@ -51,18 +70,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     val postCreated: LiveData<Unit>
         get() = _postCreated
 
-    private val workManager: WorkManager =
-        WorkManager.getInstance(application)
 
-    val posts:LiveData<List<Post>>
-        get() = NMediaApplication.appAuth
-            .authStateFlow
-            .flatMapLatest { (myId, _) ->
-                repository.posts
-                    .map { posts ->
-                        posts.map { it.copy(ownedByMe = it.authorId == myId) }
-                    }
-            }.asLiveData(Dispatchers.Default)
 
     private val _postsRefreshError = SingleLiveEvent<Unit>()
     val postsRefreshError: LiveData<Unit>
@@ -246,7 +254,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        getApplication<Application>().startActivity(shareIntent)
+
     }
 }
 

@@ -12,12 +12,17 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netologia.R.*
 import ru.netologia.databinding.FragmentAddNewPostBinding
 import ru.netologia.utils.AndroidUtils
 import ru.netologia.utils.StringArg
 import ru.netologia.viewmodel.PostViewModel
 
+
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class AddNewPost : Fragment() {
     private val photoRequestCode = 1
     private val cameraRequestCode = 2
@@ -121,7 +126,6 @@ class AddNewPost : Fragment() {
                 requestCode == cameraRequestCode
             ) {
                 val url = data?.data
-                val file = ImagePicker.getFile(data)
                 viewModel.changePhoto(url)
             }
 

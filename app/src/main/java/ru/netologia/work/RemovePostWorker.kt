@@ -3,11 +3,12 @@ package ru.netologia.work
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import ru.netologia.application.NMediaApplication
+import ru.netologia.repository.IPostRepository
 
 class RemovePostWorker (
     applicationContext: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
+    private val repository: IPostRepository
 ) : CoroutineWorker(applicationContext, params) {
 
     companion object {
@@ -21,7 +22,7 @@ class RemovePostWorker (
             return Result.failure()
         }
         return try {
-            NMediaApplication.repository.removePost(id)
+            repository.removePost(id)
             Result.success()
         } catch (e: Exception) {
             Result.retry()

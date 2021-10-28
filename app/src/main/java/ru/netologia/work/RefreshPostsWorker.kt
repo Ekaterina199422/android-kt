@@ -5,11 +5,12 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.netologia.application.NMediaApplication
+import ru.netologia.repository.IPostRepository
 
 class RefreshPostsWorker (
     applicationContext: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
+    private val repository: IPostRepository
 ) : CoroutineWorker(applicationContext, params) {
         companion object {
             const val name = "ru.netology.nmedia.work.RefreshPostsWorker"
@@ -17,7 +18,7 @@ class RefreshPostsWorker (
 
         override suspend fun doWork(): Result = withContext(Dispatchers.Default) {
             try {
-                NMediaApplication.repository.getAll()
+                repository.getAll()
                 Result.success()
             } catch (e: Exception) {
                 e.printStackTrace()

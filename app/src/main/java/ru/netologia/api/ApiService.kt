@@ -1,48 +1,13 @@
 package ru.netologia.api
 
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import retrofit2.http.*
-import ru.netologia.Auth.AuthState
-import ru.netologia.BuildConfig
-import ru.netologia.application.NMediaApplication
+import ru.netologia.auth.AuthState
 import ru.netologia.dto.Media
 import ru.netologia.dto.Post
 import ru.netologia.dto.PushToken
-import java.util.concurrent.TimeUnit
 
 
-private val logging = HttpLoggingInterceptor()
-        .apply {
-            if (BuildConfig.DEBUG) {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-        }
-private val client = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .addInterceptor(PostsInterceptor())
-        .addInterceptor(logging)
-        .addInterceptor { chain ->
-         NMediaApplication.appAuth.authStateFlow.value.token?.let { token ->
-            val newRequest = chain.request().newBuilder()
-                .addHeader("Authorization", token)
-                .build()
-            return@addInterceptor chain.proceed(newRequest)
-        }
-        chain.proceed(chain.request())
-    }
-
-    .build()
-
-private val retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(client)
-        .build()
 interface ApiService {
 
     @POST("users/push-tokens")
@@ -75,6 +40,4 @@ interface ApiService {
     suspend fun updateUser(@Field("login") login: String, @Field("pass") pass: String): AuthState
 
 }
-object Api {
-    val Service: ApiService by lazy(retrofit::create)
-}
+

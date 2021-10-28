@@ -9,11 +9,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netologia.R
 import ru.netologia.databinding.FragmentSignInBinding
 
+
+@AndroidEntryPoint
 class SignInFragment:Fragment() {
-    private val viewModel: SingInViewModel by viewModels()
+    private val viewModel: SignInViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

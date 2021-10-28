@@ -6,9 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import ru.netologia.Auth.AuthState
-import ru.netologia.api.Api
+import ru.netologia.api.ApiService
 import ru.netologia.application.NMediaApplication
+import ru.netologia.auth.AppAuth
+import ru.netologia.auth.AuthState
 import ru.netologia.dao.PostDao
 import ru.netologia.dao.PostWorkDao
 import ru.netologia.dto.Media
@@ -19,11 +20,14 @@ import ru.netologia.entity.PostEntity
 import ru.netologia.entity.PostWorkEntity
 import ru.netologia.enumeration.AttachmentType
 import ru.netologia.enumeration.PostState
+import javax.inject.Inject
 
 
-class PostRepositoryImpl(
+class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
-    private val postWorkDao: PostWorkDao
+    private val postWorkDao: PostWorkDao,
+    private val apiService: ApiService,
+    private val auth: AppAuth
     ) : IPostRepository {
     override val posts: Flow<List<Post>>
         get() = dao.getAll().map { // мы получаем все данные с нашей базы данных
@@ -41,7 +45,7 @@ class PostRepositoryImpl(
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {
-            val new = Api.Service.getNewer(id)
+            val new = apiService.getNewer(id)
             emit(new.size) // тот кто подписался на данные оновления будет получать количестов постов
 
         }
@@ -50,7 +54,7 @@ class PostRepositoryImpl(
         .flowOn(Dispatchers.Default)
 
     override fun getNewList(id: Long): Flow<List<Post>> = flow {
-        val posts = Api.Service.getNewer(id)
+        val posts = apiService.getNewer(id)
         emit(posts)
 
     }
@@ -58,24 +62,24 @@ class PostRepositoryImpl(
         .flowOn(Dispatchers.Default)
 
     override suspend fun getAll(): List<Post> {
-        val netPosts = Api.Service.getAll()
+        val netPosts =apiService.getAll()
         dao.insert(netPosts.map(PostEntity.Companion::fromDto))
         return netPosts
     }
 
     override suspend fun unLikeById(id: Long) {
-        Api.Service.unLikeById(id)
+        apiService.unLikeById(id)
         dao.likeById(id)
 
     }
 
     override suspend fun likeById(id: Long) {
-        Api.Service.likeById(id)
+        apiService.likeById(id)
         dao.likeById(id)
     }
 
     override suspend fun removePost(id: Long) {
-        Api.Service.removePost(id)
+        apiService.removePost(id)
         dao.removeById(id)
     }
 
@@ -89,11 +93,11 @@ class PostRepositoryImpl(
             upload.file.name,
             upload.file.asRequestBody()
         )
-        return Api.Service.upload(media)
+        return apiService.upload(media)
     }
 
     override suspend fun updateUser(login: String, pass: String): AuthState {
-        return Api.Service.updateUser(login, pass)
+        return apiService.updateUser(login, pass)
 
     }
     override suspend fun saveWork(post: Post, upload: MediaUpload): Long {
@@ -117,7 +121,7 @@ class PostRepositoryImpl(
                     PostEntity.fromWorkDto(
                         workEntity
                             .copy(
-                                authorId = NMediaApplication.appAuth.authStateFlow.value.id,
+                                authorId = auth.authStateFlow.value.id,
                                 state = PostState.Progress
                             )
                     )
@@ -158,5 +162,5 @@ class PostRepositoryImpl(
 
     override suspend fun savePost(post: PostEntity): Long = dao.insert(post)
 
-    override suspend fun sendPost(post: Post): Post = Api.Service.savePost(post)
+    override suspend fun sendPost(post: Post): Post = apiService.savePost(post)
 }

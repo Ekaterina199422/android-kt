@@ -10,11 +10,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netologia.databinding.FragmentEditPostBinding
 import ru.netologia.utils.StringArg
 import ru.netologia.viewmodel.PostViewModel
 
-
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class EditPost : Fragment() {
     companion object {
         var Bundle.authorEdit: String? by StringArg
