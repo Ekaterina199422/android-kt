@@ -14,7 +14,7 @@ import ru.netologia.R
 import ru.netologia.databinding.FragmentSignInBinding
 
 
-@AndroidEntryPoint
+
 class SignInFragment:Fragment() {
     private val viewModel: SignInViewModel by viewModels()
     override fun onCreateView(

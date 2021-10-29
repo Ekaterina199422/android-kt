@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netologia.api.ApiService
-import ru.netologia.application.NMediaApplication
 import ru.netologia.auth.AppAuth
 import ru.netologia.auth.AuthState
 import ru.netologia.dao.PostDao
@@ -131,7 +130,7 @@ class PostRepositoryImpl @Inject constructor(
                     PostEntity.fromWorkDto(
                         workEntity
                             .copy(
-                                authorId = NMediaApplication.appAuth.authStateFlow.value.id,
+                                authorId = auth.authStateFlow.value.id,
                                 state = PostState.Progress,
                                 attachment = AttachmentEmbeddable(media.id, AttachmentType.IMAGE)
                             )

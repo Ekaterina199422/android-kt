@@ -1,5 +1,6 @@
 package ru.netologia
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +30,7 @@ import ru.netologia.model.getCreateReadableMessageError
 import ru.netologia.viewmodel.PostViewModel
 
 @ExperimentalCoroutinesApi
-@AndroidEntryPoint
+
 class  FeedFragment : Fragment() {
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
@@ -52,9 +53,18 @@ class  FeedFragment : Fragment() {
 
 
             override fun onShare(post: Post) {
-                viewModel.sharePost(post)
-                checkPost = post
-
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(
+                    intent,
+                    R.string.chooser_share_post.toString()
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(shareIntent)
             }
 
             override fun onRemove(post: Post) {

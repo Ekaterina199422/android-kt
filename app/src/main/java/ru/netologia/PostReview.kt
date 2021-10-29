@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netologia.EditPost.Companion.authorEdit
 import ru.netologia.EditPost.Companion.contentEdit
@@ -22,7 +21,6 @@ import ru.netologia.viewmodel.PostViewModel
 
 
 @ExperimentalCoroutinesApi
-@AndroidEntryPoint
 class PostReview : Fragment() {
 
     companion object {

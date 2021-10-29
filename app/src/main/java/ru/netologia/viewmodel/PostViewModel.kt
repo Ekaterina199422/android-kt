@@ -1,20 +1,16 @@
 package ru.netologia.viewmodel
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.core.net.toFile
 import androidx.lifecycle.*
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.netologia.R
 import ru.netologia.auth.AppAuth
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Photo
@@ -27,7 +23,7 @@ import ru.netologia.work.RemovePostWorker
 import ru.netologia.work.SavePostWorker
 import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.IOException
-
+import javax.inject.Inject
 
 
 private val empty = Post(
@@ -43,11 +39,10 @@ private val noPhoto = Photo()
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PostViewModel (
+class PostViewModel @Inject constructor(
     private val repository:IPostRepository,
     private val workManager: WorkManager,
     private val auth: AppAuth,
-    @ApplicationContext private val context: Context
     ) : ViewModel() {
     val posts:LiveData<List<Post>>
     get() = auth
@@ -242,19 +237,7 @@ class PostViewModel (
     fun editContent(post: Post) {
         edited.value = post
     }
-    fun sharePost(post: Post) {
-        val intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, post.content)
-            type = "text/plain"
-        }
-        val shareIntent = Intent.createChooser(
-            intent,
-            R.string.chooser_share_post.toString()
-        ).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
 
     }
-}
+
 

@@ -22,7 +22,7 @@ import ru.netologia.viewmodel.PostViewModel
 
 
 @ExperimentalCoroutinesApi
-@AndroidEntryPoint
+
 class AddNewPost : Fragment() {
     private val photoRequestCode = 1
     private val cameraRequestCode = 2

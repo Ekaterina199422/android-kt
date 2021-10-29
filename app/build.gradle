@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'dagger.hilt.android.plugin'
 android {
     compileSdkVersion 30
 
@@ -116,6 +116,6 @@ android {
         implementation "androidx.work:work-runtime-ktx:$workmanager_version"
 
         //Hilt
-        kapt "com.google.dagger:hilt-compiler:$hilt_version"
         implementation "com.google.dagger:hilt-android:$hilt_version"
+        kapt "com.google.dagger:hilt-compiler:$hilt_version"
     }

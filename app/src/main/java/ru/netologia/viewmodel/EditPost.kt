@@ -17,7 +17,7 @@ import ru.netologia.utils.StringArg
 import ru.netologia.viewmodel.PostViewModel
 
 @ExperimentalCoroutinesApi
-@AndroidEntryPoint
+
 class EditPost : Fragment() {
     companion object {
         var Bundle.authorEdit: String? by StringArg
