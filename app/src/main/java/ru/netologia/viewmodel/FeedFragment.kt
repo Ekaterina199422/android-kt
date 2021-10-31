@@ -30,7 +30,7 @@ import ru.netologia.model.getCreateReadableMessageError
 import ru.netologia.viewmodel.PostViewModel
 
 @ExperimentalCoroutinesApi
-
+@AndroidEntryPoint
 class  FeedFragment : Fragment() {
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
