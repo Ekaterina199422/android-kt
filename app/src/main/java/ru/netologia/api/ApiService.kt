@@ -1,6 +1,7 @@
 package ru.netologia.api
 
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.*
 import ru.netologia.auth.AuthState
 import ru.netologia.dto.Media
@@ -27,6 +28,21 @@ interface ApiService {
 
     @DELETE("posts/{id}")
     suspend fun removePost(@Path("id") id: Long): Unit
+
+    @GET("posts/latest")
+    suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>
+
+    @GET("posts/{id}/before")
+    suspend fun getBefore(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Post>>
+
+    @GET("posts/{id}/after")
+    suspend fun getAfter(
+        @Path("id") id: Long,
+        @Query("count") count: Int
+    ): Response<List<Post>>
 
     @POST("posts")
     suspend fun savePost(@Body post: Post): Post

@@ -3,17 +3,17 @@ package ru.netologia
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
+import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import ru.netologia.EditPost.Companion.authorEdit
 import ru.netologia.EditPost.Companion.contentEdit
 import ru.netologia.EditPost.Companion.publishedEdit
@@ -26,7 +26,6 @@ import ru.netologia.adapter.IOnInteractionListener
 import ru.netologia.adapter.PostsAdapter
 import ru.netologia.databinding.FragmentFeedBinding
 import ru.netologia.dto.Post
-import ru.netologia.model.getCreateReadableMessageError
 import ru.netologia.viewmodel.PostViewModel
 
 @ExperimentalCoroutinesApi
@@ -34,15 +33,13 @@ import ru.netologia.viewmodel.PostViewModel
 class  FeedFragment : Fragment() {
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
-    @ExperimentalCoroutinesApi
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View {
+    ) = FragmentFeedBinding.inflate(layoutInflater).apply {
         var removeId = 0L
         var checkPost = Post()
-        val binding = FragmentFeedBinding.inflate(layoutInflater)
         val adapter = PostsAdapter(object : IOnInteractionListener {
 
 
@@ -108,61 +105,37 @@ class  FeedFragment : Fragment() {
             }
         })
 
-        binding.swipeRefreshLayout.setOnRefreshListener(viewModel::refreshingPosts)
-        viewModel.postsRefreshError.observe(viewLifecycleOwner) {
-            Snackbar.make(binding.root, R.string.message_status_error, Snackbar.LENGTH_SHORT)
-                    .setAction("Retry") { viewModel.refreshingPosts() }
-                    .show()
-        }
-        viewModel.postRemoveError.observe(viewLifecycleOwner) {
-            Snackbar.make(
-                    binding.root,
-                    R.string.message_status_error,
-                    Snackbar.LENGTH_LONG
-            )
-                    .setAction("Retry") { viewModel.removePost(removeId) }
-                    .show()
-        }
-
-        viewModel.postLikeError.observe(viewLifecycleOwner) {
-            Snackbar.make(
-                    binding.root,
-                    R.string.message_status_error,
-                    Snackbar.LENGTH_SHORT
-            )
-                    .setAction("Retry") { viewModel.like(checkPost) }
-                    .show()
-        }
-         binding.fabExtend.setOnClickListener {
-             viewModel.getNewPosts()
-        adapter.notifyDataSetChanged()
-        binding.rvPostList.layoutManager?.smoothScrollToPosition(
-                binding.rvPostList,
-                RecyclerView.State(),
-                0
-        )
-    }
-    viewModel.newPosts.observe(viewLifecycleOwner) {
-    viewModel.checkNewPosts(it)
-}
-
-        binding.fab.setOnClickListener {
+        swipeRefreshLayout.setOnRefreshListener(adapter::refresh)
+        fab.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_addNewPost)
         }
-        binding.rvPostList.adapter = adapter
-        viewModel.state.observe(viewLifecycleOwner) { model ->
-            binding.groupStatus.isVisible = model.errorVisible
-            binding.tvTextStatusEmpty.isVisible = model.empty
-            binding.tvTextStatusError.text = model.error.getCreateReadableMessageError(resources)
-            binding.swipeRefreshLayout.isRefreshing = model.refreshing
-            binding.pbProgress.isVisible = model.loading
-            binding.fabExtend.isVisible = model.visibleFab
+        rvPostList.adapter = adapter
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.posts.collectLatest(adapter::submitData)
         }
-        viewModel.posts.observe(viewLifecycleOwner, adapter::submitList)
-        binding.errorButton.setOnClickListener {
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest { state ->
+                swipeRefreshLayout.isRefreshing =
+                    state.refresh is LoadState.Loading ||
+                            state.prepend is LoadState.Loading ||
+                            state.append is LoadState.Loading
+            }
+        }
+
+
+        viewModel.state.observe(viewLifecycleOwner) { model ->
+            groupStatus.isVisible = model.errorVisible
+            tvTextStatusEmpty.isVisible = model.empty
+            tvTextStatusError.text = model.error?.code
+            pbProgress.isVisible = model.loading
+            swipeRefreshLayout.isRefreshing = model.refreshing
+            fabExtend.isVisible = model.visibleFab
+        }
+        errorButton.setOnClickListener {
             viewModel.loadPosts()
         }
-        return binding.root
-    }
+
+    } .root
 
 }

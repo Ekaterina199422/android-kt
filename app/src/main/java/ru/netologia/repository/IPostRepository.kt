@@ -1,6 +1,7 @@
 package ru.netologia.repository
 
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.netologia.auth.AuthState
 import ru.netologia.dto.Media
@@ -10,7 +11,7 @@ import ru.netologia.entity.PostEntity
 
 
 interface IPostRepository {
-    val posts: Flow<List<Post>> // отвечает за предоставление данных в виде LiveData
+    val posts: Flow<PagingData<Post>> // отвечает за предоставление данных в виде LiveData
     fun getNewerCount(id: Long): Flow<Int>
     fun getNewList(id: Long) : Flow<List<Post>>
     suspend fun getAll(): List<Post>

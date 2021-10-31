@@ -2,8 +2,14 @@ package ru.netologia.repository
 
 import android.net.Uri
 import androidx.core.net.toFile
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netologia.api.ApiService
@@ -28,19 +34,12 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val auth: AppAuth
     ) : IPostRepository {
-    override val posts: Flow<List<Post>>
-        get() = dao.getAll().map { // мы получаем все данные с нашей базы данных
-            it.sortedWith(Comparator { o1, o2 ->
-                when {
-                    o1.id == 0L && o2.id == 0L -> o1.localId.compareTo(o2.localId)
-                    o1.id == 0L -> -1
-                    o2.id == 0L -> 1
-                    else -> -o1.id.compareTo(o2.id)
-                }
-            })
-                .map(PostEntity::toDto)
-        }
-            .flowOn(Dispatchers.Default) // Действия будут происходи в Default потоке
+
+    override val posts: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
+        pagingSourceFactory = { PostPagingSource(apiService) }
+    ).flow
+
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {

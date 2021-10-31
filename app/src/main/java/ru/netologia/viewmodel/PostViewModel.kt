@@ -2,12 +2,17 @@ package ru.netologia.viewmodel
 
 import android.net.Uri
 import androidx.core.net.toFile
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -44,15 +49,19 @@ class PostViewModel @Inject constructor(
     private val workManager: WorkManager,
     private val auth: AppAuth,
     ) : ViewModel() {
-    val posts:LiveData<List<Post>>
-    get() = auth
-.authStateFlow
-.flatMapLatest { (myId, _) ->
-    repository.posts
-        .map { posts ->
-            posts.map { it.copy(ownedByMe = it.authorId == myId) }
+
+    private var cached: Flow<PagingData<Post>> = repository
+        .posts
+        .cachedIn(viewModelScope)
+
+    val posts: Flow<PagingData<Post>> = auth.authStateFlow
+        .flatMapLatest { (myId, _) ->
+            repository.posts.map { pagingData ->
+                pagingData.map { post ->
+                    post.copy(ownedByMe = post.authorId == myId)
+                }
+            }
         }
-}.asLiveData(Dispatchers.Default)
     var isHandledBackPressed: String = ""
 
 
@@ -81,10 +90,10 @@ class PostViewModel @Inject constructor(
         get() = _postLikeError
 
 
-    val newPosts = posts.switchMap {// switchMap позваляет нам подписаться на именения в наших постах
+  /*  val newPosts = posts.switchMap {// switchMap позваляет нам подписаться на именения в наших постах
         repository.getNewerCount(it.firstOrNull()?.id ?: 0L) // вызвыем функцию getNewerCount с репозитория и передаем id самого первого поста
                 .asLiveData() // возращеается новая LiveData
-    }
+    }*/
     private val _photo = MutableLiveData(noPhoto)
     val photo: LiveData<Photo>
         get() = _photo
@@ -97,25 +106,6 @@ class PostViewModel @Inject constructor(
         _photo.value = Photo(uri)
     }
 
-    fun checkNewPosts(count: Int) {
-        if (count > 0) {
-            _state.value = FeedModel(visibleFab = true)
-        }
-    }
-
-    fun getNewPosts() {
-        viewModelScope.launch {
-            try {
-                val newPosting = repository.getNewList(posts.value?.firstOrNull()?.id ?: 0L)
-                newPosting.collect { posts ->
-                    repository.sendNewPost(posts)
-                }
-                _state.value = FeedModel(visibleFab = false)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     fun like(post: Post) {
         if (post.likedByMe) {
