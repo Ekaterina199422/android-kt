@@ -2,21 +2,18 @@ package ru.netologia.repository
 
 import android.net.Uri
 import androidx.core.net.toFile
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.netologia.api.ApiService
 import ru.netologia.auth.AppAuth
 import ru.netologia.auth.AuthState
 import ru.netologia.dao.PostDao
+import ru.netologia.dao.PostRemoteKeyDao
 import ru.netologia.dao.PostWorkDao
+import ru.netologia.db.AppDb
 import ru.netologia.dto.Media
 import ru.netologia.dto.MediaUpload
 import ru.netologia.dto.Post
@@ -29,17 +26,22 @@ import javax.inject.Inject
 
 
 class PostRepositoryImpl @Inject constructor(
+    appDb: AppDb,
     private val dao: PostDao,
     private val postWorkDao: PostWorkDao,
     private val apiService: ApiService,
-    private val auth: AppAuth
+    private val auth: AppAuth,
+    private val postRemoteKeyDao: PostRemoteKeyDao,
     ) : IPostRepository {
 
+    @OptIn(ExperimentalPagingApi::class)
     override val posts: Flow<PagingData<Post>> = Pager(
-        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
-        pagingSourceFactory = { PostPagingSource(apiService) }
-    ).flow
-
+        config = PagingConfig(pageSize = 25),
+        remoteMediator = PostRemoteMediator(apiService, appDb, dao, postRemoteKeyDao),
+        pagingSourceFactory = dao::pagingSource,
+    ).flow.map { pagingData ->
+        pagingData.map(PostEntity::toDto)
+    }
 
     override fun getNewerCount(id: Long): Flow<Int> = flow {
         while (true) {

@@ -1,11 +1,16 @@
 package ru.netologia.dao
 
+import androidx.paging.PagingSource
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import ru.netologia.entity.PostEntity
 
 @Dao
 interface PostDao {
+
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+    fun pagingSource(): PagingSource<Int, PostEntity>
+
     @Query("SELECT * FROM PostEntity")
     fun getAll(): Flow<List<PostEntity>>
 
@@ -15,6 +20,8 @@ interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNewer(posts: List<PostEntity>)
 
+    @Query("SELECT COUNT(*) == 0 FROM PostEntity")
+    suspend fun isEmpty(): Boolean
 
     @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
     suspend fun updateContentById(id: Long, content: String)

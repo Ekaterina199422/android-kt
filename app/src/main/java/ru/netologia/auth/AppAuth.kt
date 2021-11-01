@@ -21,8 +21,8 @@ class AppAuth  @Inject constructor (
     private val apiService: ApiService
 ) {
     companion object {
-        val idKey = "id"
-        val tokenKey = "token"
+        const val idKey = "id"
+        const val tokenKey = "token"
     }
 
     private val _authStateFlow: MutableStateFlow<AuthState>
