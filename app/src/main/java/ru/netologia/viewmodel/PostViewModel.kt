@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
 import androidx.paging.map
 import androidx.work.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,9 +18,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netologia.auth.AppAuth
-import ru.netologia.dto.MediaUpload
-import ru.netologia.dto.Photo
-import ru.netologia.dto.Post
+import ru.netologia.dto.*
 import ru.netologia.entity.PostEntity
 import ru.netologia.enumeration.PostState
 import ru.netologia.model.FeedModel
@@ -29,6 +28,7 @@ import ru.netologia.work.SavePostWorker
 import ru.netology.nmedia.utils.SingleLiveEvent
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 private val empty = Post(
@@ -50,11 +50,23 @@ class PostViewModel @Inject constructor(
     private val auth: AppAuth,
     ) : ViewModel() {
 
-    private var cached: Flow<PagingData<Post>> = repository
+    private val cached: Flow<PagingData<FeedItem>> = repository
         .posts
+        .map { pagingData ->
+            pagingData.insertSeparators(
+                generator = { before, after ->
+                    if (before?.id?.rem(5) != 0L) null else
+                        Ad( // условие( если при делении на 5 id будет равен 0) вствляем рекламу(каждый пятый пост)
+                            Random.nextLong(),
+                            "https://netology.ru",
+                            "figma.jpg"
+                        )
+                }
+            )
+        }
         .cachedIn(viewModelScope)
 
-    val posts: Flow<PagingData<Post>> = auth.authStateFlow
+    val posts: Flow<PagingData<FeedItem>> = auth.authStateFlow
         .flatMapLatest { (myId, _) ->
             repository.posts.map { pagingData ->
                 pagingData.map { post ->
